@@ -14,7 +14,7 @@ tile_size = 50
 bg_img = pygame.image.load("kepek/hatter.png")
 
 class Player():
-	def __init__(self, level, checkpoint_x, checkpoint_y, completed):
+	def __init__(self, level, completed):
 		img = pygame.image.load("kepek/trollface.jpg")
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
@@ -30,8 +30,8 @@ class Player():
 		self.jumped = False
 		self.width = self.image.get_width()
 		self.height = self.image.get_height()
-		self.checkpoint_x = checkpoint_x
-		self.checkpoint_y = checkpoint_y
+		self.checkpoint_x = self.rect.x
+		self.checkpoint_y = self.rect.y
 		self.died = False
 		self.completed = completed
 
@@ -199,11 +199,9 @@ world = World(world_data)
 world2 = World(world2_data)
 worlds = [world, world2]
 level = 1
-checkpoint_x = 0
-checkpoint_y = 0
 
 completed = False
-player = Player(level, checkpoint_x, checkpoint_y, completed)
+player = Player(level, completed)
 
 run = True
 while run:
@@ -216,7 +214,7 @@ while run:
 	if completed == True:
 		level += 1
 		completed = False
-		player = Player(level, checkpoint_x, checkpoint_y, completed)
+		player = Player(level, completed)
 		continue
 
 	for event in pygame.event.get():
