@@ -136,7 +136,7 @@ class World():
 					img_rect = img.get_rect()
 					img_rect.x = col_count * tile_size
 					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 4)
+					tile = (img, img_rect, 5)
 					self.tile_list.append(tile)
                     
 				col_count += 1
