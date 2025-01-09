@@ -67,7 +67,7 @@ class Player():
 				if tile[2] == 3:
 					self.checkpoint_x = tile[3]
 					self.checkpoint_y = tile[4]
-				if tile[2] == 1:
+				if tile[2] == 5:
 					return True
 
 
@@ -97,6 +97,7 @@ class World():
 		grass_img = pygame.image.load("kepek/grass.png")
 		goal_img = pygame.image.load("kepek/goal.png")
 		water_img = pygame.image.load("kepek/water.png")
+		goal2_img = pygame.image.load("kepek/goal2.png")
 
 		row_count = 0
 		for row in data:
@@ -130,6 +131,13 @@ class World():
 					img_rect.y = row_count * tile_size
 					tile = (img, img_rect, 4)
 					self.tile_list.append(tile)
+				if tile == 5:
+					img = pygame.transform.scale(goal2_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					tile = (img, img_rect, 4)
+					self.tile_list.append(tile)
                     
 				col_count += 1
 			row_count += 1
@@ -143,7 +151,7 @@ class World():
 world_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 5, 5, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
@@ -166,7 +174,7 @@ world_data = [
 world2_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1], 
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 5, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 2, 0, 0, 0, 2, 2, 2, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
 [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
