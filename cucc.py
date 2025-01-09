@@ -22,11 +22,11 @@ class Player():
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
 		self.level = level - 1
-		if self.level == 1:
+		if self.level == 0:
 			self.rect.x = 100
 			self.rect.y = screen_height - 130
 
-		elif self.level == 2:
+		elif self.level == 1:
 			self.rect.x = 100
 			self.rect.y = screen_height - 200
 		self.vel_y = 0
@@ -209,6 +209,7 @@ while run:
 	
 	print(level)
 	print(completed)
+	
 	worlds[level - 1].draw()
 	completed = player.update()
 
