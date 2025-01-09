@@ -21,13 +21,18 @@ class Player():
 		img = pygame.image.load("kepek/trollface.jpg")
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
-		self.rect.x = x
-		self.rect.y = y
+		self.level = level - 1
+		if self.level == 1:
+			self.rect.x = 100
+			self.rect.y = screen_height - 130
+
+		elif self.level == 2:
+			self.rect.x = 100
+			self.rect.y = screen_height - 200
 		self.vel_y = 0
 		self.jumped = False
 		self.width = self.image.get_width()
 		self.height = self.image.get_height()
-		self.level = level - 1
 		self.checkpoint_x = checkpoint_x
 		self.checkpoint_y = checkpoint_y
 		self.died = False
@@ -191,19 +196,9 @@ worlds = [world, world2]
 level = 1
 x = 0
 y = 0
-checkpoint_x = 0
-checkpoint_y = 0
-cucc = True
-if level == 1:
-	x = 100
-	y = screen_height - 130
-
-elif level == 2:
-	x = 100
-	y = screen_height - 200
-
 checkpoint_x = x
 checkpoint_y = y
+
 completed = False
 player = Player(x, y, level, checkpoint_x, checkpoint_y, completed)
 
@@ -211,13 +206,15 @@ run = True
 while run:
 
 	screen.blit(bg_img, (0, 0))
-
 	
+	print(level)
+	print(completed)
 	worlds[level - 1].draw()
 	completed = player.update()
 
 	if completed == True:
 		level += 1
+		completed = False
 		player = Player(x, y, level, checkpoint_x, checkpoint_y, completed)
 		continue
 
