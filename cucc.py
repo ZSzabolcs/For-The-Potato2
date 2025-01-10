@@ -9,9 +9,11 @@ screen_height = 1000
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('For The Potato')
 
+font = pygame.font.Font(None, 50)
 tile_size = 50
 
-bg_img = pygame.image.load("kepek/hatter.png")
+bg_img = pygame.image.load("kepek/hatter.png").convert()
+
 
 class Player():
 	def __init__(self, level, completed):
@@ -69,8 +71,7 @@ class Player():
 					self.checkpoint_y = tile[4]
 				if tile[2] == 5:
 					return True
-
-
+		
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				dx = 0
 
@@ -90,7 +91,8 @@ class Player():
 		screen.blit(self.image, self.rect)
 
 class World():
-	def __init__(self, data):
+	def __init__(self, data, level):
+		self.level = level
 		self.tile_list = []
 
 		dirt_img = pygame.image.load("kepek/dirt.png")
@@ -144,6 +146,9 @@ class World():
 
 	def draw(self):
 		for tile in self.tile_list:
+			text = font.render(self.level, False, (0, 0, 0))
+			text_place = text.get_rect()
+			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
 
 
@@ -168,7 +173,7 @@ world_data = [
 [1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 2, 2, 2, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1], 
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
 world2_data = [
@@ -191,14 +196,14 @@ world2_data = [
 [1, 2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
 [1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1],  
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-
-world = World(world_data)
-world2 = World(world2_data)
-worlds = [world, world2]
 level = 1
+world = World(world_data, "Level: 1")
+world2 = World(world2_data, "Level: 2")
+worlds = [world, world2]
+
 
 completed = False
 player = Player(level, completed)
@@ -207,7 +212,7 @@ run = True
 while run:
 
 	screen.blit(bg_img, (0, 0))
-	
+
 	worlds[level - 1].draw()
 	completed = player.update()
 
@@ -221,6 +226,9 @@ while run:
 		if event.type == pygame.QUIT:
 			run = False
 
-	pygame.display.update()
+
+
+	pygame.display.flip()
+
 
 pygame.quit()
