@@ -89,10 +89,15 @@ class Player():
 			self.died = False
 
 		screen.blit(self.image, self.rect)
+		return False
 
 class World():
-	def __init__(self, data, level):
-		self.level = level
+
+	
+	all_worlds = []
+
+	def __init__(self, data, level_name):
+		self.level = level_name
 		self.tile_list = []
 
 		dirt_img = pygame.image.load("kepek/dirt.png")
@@ -143,6 +148,7 @@ class World():
                     
 				col_count += 1
 			row_count += 1
+		World.all_worlds.append(self.tile_list)
 
 	def draw(self):
 		for tile in self.tile_list:
@@ -203,7 +209,6 @@ level = 1
 world = World(world_data, "Level: 1")
 world2 = World(world2_data, "Level: 2")
 worlds = [world, world2]
-
 
 completed = False
 player = Player(level, completed)
