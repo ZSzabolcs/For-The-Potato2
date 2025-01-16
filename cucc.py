@@ -1,23 +1,21 @@
 import pygame
 from pygame.locals import *
+import os
 
 pygame.init()
+font = pygame.font.Font(None, 50)
 
 screen_width = 1000
 screen_height = 1000
-
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('For The Potato')
-
-font = pygame.font.Font(None, 50)
 tile_size = 50
-
-bg_img = pygame.image.load("kepek/hatter.png").convert()
+bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 
 
 class Player():
 	def __init__(self, level, completed):
-		img = pygame.image.load("kepek/trollface.jpg")
+		img = pygame.image.load(os.path.join("kepek", "trollface.jpg"))
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
 		self.level = level - 1
@@ -89,22 +87,18 @@ class Player():
 			self.died = False
 
 		screen.blit(self.image, self.rect)
-		return False
+
 
 class World():
-
-	
-	all_worlds = []
-
 	def __init__(self, data, level_name):
 		self.level = level_name
 		self.tile_list = []
 
-		dirt_img = pygame.image.load("kepek/dirt.png")
-		grass_img = pygame.image.load("kepek/grass.png")
-		goal_img = pygame.image.load("kepek/goal.png")
-		water_img = pygame.image.load("kepek/water.png")
-		goal2_img = pygame.image.load("kepek/goal2.png")
+		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
+		grass_img = pygame.image.load(os.path.join("kepek","grass.png"))
+		goal_img = pygame.image.load(os.path.join("kepek", "goal.png"))
+		water_img = pygame.image.load(os.path.join("kepek", "water.png"))
+		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
 
 		row_count = 0
 		for row in data:
@@ -148,7 +142,6 @@ class World():
                     
 				col_count += 1
 			row_count += 1
-		World.all_worlds.append(self.tile_list)
 
 	def draw(self):
 		for tile in self.tile_list:
@@ -213,9 +206,11 @@ worlds = [world, world2]
 completed = False
 player = Player(level, completed)
 
+clock = pygame.time.Clock()
+FPS = 60
 run = True
 while run:
-
+	clock.tick(FPS)
 	screen.blit(bg_img, (0, 0))
 
 	worlds[level - 1].draw()
