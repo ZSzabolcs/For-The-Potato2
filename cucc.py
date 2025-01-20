@@ -1,21 +1,21 @@
 import pygame
 from pygame.locals import *
-import os
 
 pygame.init()
-font = pygame.font.Font(None, 50)
 
 screen_width = 1000
 screen_height = 1000
+
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('For The Potato')
-tile_size = 50
-bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 
+tile_size = 50
+
+bg_img = pygame.image.load("kepek/hatter.png")
 
 class Player():
 	def __init__(self, level, completed):
-		img = pygame.image.load(os.path.join("kepek", "trollface.jpg"))
+		img = pygame.image.load("kepek/trollface.jpg")
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
 		self.level = level - 1
@@ -69,7 +69,8 @@ class Player():
 					self.checkpoint_y = tile[4]
 				if tile[2] == 5:
 					return True
-		
+
+
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				dx = 0
 
@@ -88,17 +89,15 @@ class Player():
 
 		screen.blit(self.image, self.rect)
 
-
 class World():
-	def __init__(self, data, level_name):
-		self.level = level_name
+	def __init__(self, data):
 		self.tile_list = []
 
-		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
-		grass_img = pygame.image.load(os.path.join("kepek","grass.png"))
-		goal_img = pygame.image.load(os.path.join("kepek", "goal.png"))
-		water_img = pygame.image.load(os.path.join("kepek", "water.png"))
-		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
+		dirt_img = pygame.image.load("kepek/dirt.png")
+		grass_img = pygame.image.load("kepek/grass.png")
+		goal_img = pygame.image.load("kepek/goal.png")
+		water_img = pygame.image.load("kepek/water.png")
+		goal2_img = pygame.image.load("kepek/goal2.png")
 
 		row_count = 0
 		for row in data:
@@ -145,9 +144,6 @@ class World():
 
 	def draw(self):
 		for tile in self.tile_list:
-			text = font.render(self.level, False, (0, 0, 0))
-			text_place = text.get_rect()
-			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
 
 
@@ -172,7 +168,7 @@ world_data = [
 [1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 2, 2, 2, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1], 
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
 ]
 
 world2_data = [
@@ -195,24 +191,23 @@ world2_data = [
 [1, 2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
 [1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1],  
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
 ]
 
-level = 1
-world = World(world_data, "Level: 1")
-world2 = World(world2_data, "Level: 2")
+
+world = World(world_data)
+world2 = World(world2_data)
 worlds = [world, world2]
+level = 1
 
 completed = False
 player = Player(level, completed)
 
-clock = pygame.time.Clock()
-FPS = 60
 run = True
 while run:
-	clock.tick(FPS)
-	screen.blit(bg_img, (0, 0))
 
+	screen.blit(bg_img, (0, 0))
+	
 	worlds[level - 1].draw()
 	completed = player.update()
 
@@ -226,9 +221,6 @@ while run:
 		if event.type == pygame.QUIT:
 			run = False
 
-
-
-	pygame.display.flip()
-
+	pygame.display.update()
 
 pygame.quit()
