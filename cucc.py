@@ -15,7 +15,7 @@ bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
-		img = pygame.image.load("C:/Users/zelen/Documents/For-The-Potato2-main/kepek/enemy.png")
+		img = pygame.image.load(os.path.join("kepek", "enemy.png")).convert()
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
 		self.rect.x = x
