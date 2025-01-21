@@ -21,15 +21,19 @@ class Enemy(pygame.sprite.Sprite):
 		self.rect.x = x
 		self.rect.y = y
 		self.move_direction = 1
-		self.move_counter = 0
+		self.speed = 1
 
 	def update(self):
-		self.rect.x += self.move_direction
-		self.move_counter += 1
-		if abs(self.move_counter) > 50:
+		next_x = self.rect.x + self.move_direction * self.speed
+		ground_beneath_next = False
+		for tile in worlds[level - 1].tile_list:
+			if tile[1].colliderect(next_x + self.rect.width // 2, self.rect.bottom + 1, 1, 1):
+				ground_beneath_next = True
+				break
+		if not ground_beneath_next:
 			self.move_direction *= -1
-			self.move_counter *= -1
 
+		self.rect.x += self.move_direction * self.speed
 
 class Player():
 	def __init__(self, level, completed):
@@ -188,7 +192,7 @@ world_data = [
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 0, 6, 0, 2, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
