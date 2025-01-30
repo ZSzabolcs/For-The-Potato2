@@ -29,10 +29,12 @@ class Enemy(pygame.sprite.Sprite):
 		next_bottom = self.rect.bottom + 1
 		ground_beneath_next = False
 		for tile in worlds[self.level].tile_list:
-			if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1):
+			if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1) and tile[2] != 7:
 				ground_beneath_next = True
-				break
+
 		if not ground_beneath_next:
+			if tile[2] == 7:
+				self.rect.x += 100
 			self.move_direction *= -1
 
 		self.rect.x += self.move_direction * self.speed
@@ -177,6 +179,13 @@ class World():
 				if tile == 6:
 					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level)
 					self.world_enemy_group.add(enemy)
+				if tile == 7:
+					img = pygame.transform.scale(grass_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					tile = (img, img_rect, 7)
+					self.tile_list.append(tile)
                     
 				col_count += 1
 			row_count += 1
@@ -236,11 +245,35 @@ world2_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
+world3_data = [
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 2, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],  
+[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 4, 4, 4, 1, 4, 4, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],   
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+]
+
 enemy_group = pygame.sprite.Group()
-level = 1
+level = 3
 world = World(world_data, 1, "Level: 1")
 world2 = World(world2_data, 2, "Level: 2")
-worlds = [world, world2]
+world3 = World(world3_data, 3, "Level: 3")
+worlds = [world, world2, world3]
 
 completed = False
 player = Player(level, completed)
@@ -248,16 +281,15 @@ player = Player(level, completed)
 clock = pygame.time.Clock()
 FPS = 60
 run = 1
-
+print(enemy_group)
+print(world.world_enemy_group)
 while run:
 	clock.tick(FPS)
 	screen.blit(bg_img, (0, 0))
 
 	worlds[level - 1].draw()
-
+	worlds[level - 1].world_enemy_group.update()
 	worlds[level - 1].world_enemy_group.draw(screen)
-	worlds[level - 1].world_enemy_group.update() 
-	worlds[level - 1].world_enemy_group
 	completed = player.update()
 
 
