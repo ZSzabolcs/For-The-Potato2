@@ -13,7 +13,7 @@ tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 
 class Enemy(pygame.sprite.Sprite):
-	def __init__(self, x, y):
+	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
 		img = pygame.image.load(os.path.join("kepek", "enemy.png")).convert()
 		self.image = pygame.transform.scale(img, (40, 40))
@@ -22,12 +22,14 @@ class Enemy(pygame.sprite.Sprite):
 		self.rect.y = y
 		self.move_direction = 1
 		self.speed = 1
+		self.level = level
 
 	def update(self):
 		next_x = self.rect.x + self.move_direction * self.speed
+		next_bottom = self.rect.bottom + 1
 		ground_beneath_next = False
-		for tile in worlds[level - 1].tile_list:
-			if tile[1].colliderect(next_x + self.rect.width // 2, self.rect.bottom + 1, 1, 1):
+		for tile in worlds[self.level].tile_list:
+			if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1):
 				ground_beneath_next = True
 				break
 		if not ground_beneath_next:
@@ -120,8 +122,9 @@ class Player():
 
 
 class World():
-	def __init__(self, data, level_name):
-		self.level = level_name
+	def __init__(self, data, level, level_name):
+		self.level = level - 1
+		self.level_name = level_name
 		self.tile_list = []
 
 		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
@@ -170,7 +173,7 @@ class World():
 					tile = (img, img_rect, 5)
 					self.tile_list.append(tile)
 				if tile == 6:
-					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15)
+					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level)
 					enemy_group.add(enemy)
                     
 				col_count += 1
@@ -178,7 +181,7 @@ class World():
 
 	def draw(self):
 		for tile in self.tile_list:
-			text = font.render(self.level, False, (0, 0, 0))
+			text = font.render(self.level_name, False, (0, 0, 0))
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
@@ -212,7 +215,7 @@ world2_data = [
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 5, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 0, 0, 6, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 2, 0, 0, 0, 2, 2, 2, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
 [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
@@ -221,11 +224,11 @@ world2_data = [
 [1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],  
 [1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
 [1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+[1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 6, 0, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1], 
 [1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1], 
-[1, 2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 1], 
+[1, 2, 2, 0, 0, 0, 2, 0, 6, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 1], 
 [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
 [1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1],  
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -233,8 +236,8 @@ world2_data = [
 
 enemy_group = pygame.sprite.Group()
 level = 1
-world = World(world_data, "Level: 1")
-world2 = World(world2_data, "Level: 2")
+world = World(world_data, level, "Level: 1")
+world2 = World(world2_data, level, "Level: 2")
 worlds = [world, world2]
 
 completed = False
