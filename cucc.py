@@ -37,6 +37,7 @@ class Enemy(pygame.sprite.Sprite):
 
 		self.rect.x += self.move_direction * self.speed
 
+
 class Player():
 	def __init__(self, level, completed):
 		img = pygame.image.load(os.path.join("kepek", "trollface.jpg"))
@@ -126,6 +127,7 @@ class World():
 		self.level = level - 1
 		self.level_name = level_name
 		self.tile_list = []
+		self.world_enemy_group = pygame.sprite.Group()
 
 		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
 		grass_img = pygame.image.load(os.path.join("kepek","grass.png"))
@@ -174,7 +176,7 @@ class World():
 					self.tile_list.append(tile)
 				if tile == 6:
 					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level)
-					enemy_group.add(enemy)
+					self.world_enemy_group.add(enemy)
                     
 				col_count += 1
 			row_count += 1
@@ -245,16 +247,18 @@ player = Player(level, completed)
 
 clock = pygame.time.Clock()
 FPS = 60
-run = True
+run = 1
+print(enemy_group)
+print(world.world_enemy_group)
 while run:
 	clock.tick(FPS)
 	screen.blit(bg_img, (0, 0))
 
 	worlds[level - 1].draw()
+	worlds[level - 1].world_enemy_group.update()
+	worlds[level - 1].world_enemy_group.draw(screen)
 	completed = player.update()
 
-	enemy_group.update()
-	enemy_group.draw(screen)
 
 	if completed == True:
 		level += 1
