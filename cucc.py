@@ -238,8 +238,8 @@ world2_data = [
 
 enemy_group = pygame.sprite.Group()
 level = 1
-world = World(world_data, level, "Level: 1")
-world2 = World(world2_data, level, "Level: 2")
+world = World(world_data, 1, "Level: 1")
+world2 = World(world2_data, 2, "Level: 2")
 worlds = [world, world2]
 
 completed = False
@@ -248,15 +248,16 @@ player = Player(level, completed)
 clock = pygame.time.Clock()
 FPS = 60
 run = 1
-print(enemy_group)
-print(world.world_enemy_group)
+
 while run:
 	clock.tick(FPS)
 	screen.blit(bg_img, (0, 0))
 
 	worlds[level - 1].draw()
-	worlds[level - 1].world_enemy_group.update()
+
 	worlds[level - 1].world_enemy_group.draw(screen)
+	worlds[level - 1].world_enemy_group.update() 
+	worlds[level - 1].world_enemy_group
 	completed = player.update()
 
 
