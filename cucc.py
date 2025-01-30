@@ -98,7 +98,7 @@ class Player():
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				dx = 0
 
-		for enemy in enemy_group:
+		for enemy in worlds[self.level].world_enemy_group:
 			if self.rect.colliderect(enemy.rect):
 				if self.rect.bottom <= enemy.rect.top + 10:
 					enemy.kill()  
