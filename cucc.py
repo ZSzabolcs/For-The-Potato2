@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import os
+import worlds
 
 pygame.init()
 font = pygame.font.Font(None, 50)
@@ -14,7 +15,7 @@ bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 
 
 class Enemy(pygame.sprite.Sprite):
-	def __init__(self, x, y, level, int_range = [], i = 0):
+	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
 		img = pygame.image.load(os.path.join("kepek", "enemy.png")).convert()
 		self.image = pygame.transform.scale(img, (40, 40))
@@ -24,51 +25,26 @@ class Enemy(pygame.sprite.Sprite):
 		self.move_direction = 1
 		self.speed = 1
 		self.level = level
-		if len(int_range) == 2:
-			self.right_limit = int_range[1]
-			self.left_limit = int_range[0]
+
+		
 
 
 	def update(self):
 		next_x = self.rect.x + self.move_direction * self.speed
 		next_bottom = self.rect.bottom + 1
 		ground_beneath_next = False
-		wall_beneath_next = False
 		self.rect.x += self.move_direction * self.speed
 
+		for tile in worlds_list[self.level].tile_list:
+				if tile[1].collidepoint(self.rect.right, self.rect.midright[1]) and tile[2] == 1:
+					self.move_direction *= -1
+				if tile[1].collidepoint(self.rect.left, self.rect.midleft[1]) and tile[2] == 1:
+					self.move_direction *= -1
+				if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1):
+					ground_beneath_next = True
 
-		if self.level == 2:
-			if self.rect.x <= self.left_limit or self.rect.x >= self.right_limit:
-				self.move_direction *= -1
-
-
-		else:
-			for tile in worlds[self.level].tile_list:
-				if self.level <= 1:
-					if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1) and tile[2] != 1:
-						ground_beneath_next = True
-				
-			if not ground_beneath_next:
-				self.move_direction *= -1
-				
-		
-		'''
-		for tile in worlds[self.level].tile_list:
-			if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1) and tile[2] != 1:
-				ground_beneath_next = True
-
-		if self.move_direction > 0:
-			if tile[1].colliderect(next_x + self.rect.width, self.rect.y, 1, self.rect.height):
-				wall_beneath_next = True
-		else:
-			if tile[1].colliderect(next_x, self.rect.y, 1, self.rect.height):
-				wall_beneath_next = True
-		
-		
-		if wall_beneath_next or not ground_beneath_next:
+		if not ground_beneath_next:
 			self.move_direction *= -1
-			print(self.rect.x, self.rect.y)
-		'''
 
 		
 
@@ -112,7 +88,7 @@ class Player():
 			self.vel_y = 10
 		dy += self.vel_y
 
-		for tile in worlds[self.level].tile_list:
+		for tile in worlds_list[self.level].tile_list:
 			if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
 				if key[pygame.K_UP] == False:
 					self.jumped = False
@@ -133,7 +109,7 @@ class Player():
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				dx = 0
 
-		for enemy in worlds[self.level].world_enemy_group:
+		for enemy in worlds_list[self.level].world_enemy_group:
 			if self.rect.colliderect(enemy.rect):
 				if self.rect.bottom <= enemy.rect.top + 10:
 					enemy.kill()  
@@ -158,12 +134,11 @@ class Player():
 
 
 class World():
-	def __init__(self, data, level, level_name, enemy_moving_int_ranges = None):
+	def __init__(self, data, level, level_name):
 		self.level = level - 1
 		self.level_name = level_name
 		self.tile_list = []
 		self.world_enemy_group = pygame.sprite.Group()
-		self.enemy_moving_int_ranges = enemy_moving_int_ranges
 		
 
 		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
@@ -172,7 +147,6 @@ class World():
 		water_img = pygame.image.load(os.path.join("kepek", "water.png"))
 		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
 
-		i = 0
 		row_count = 0
 		for row in data:
 			col_count = 0
@@ -218,13 +192,8 @@ class World():
 					self.tile_list.append(tile)
 
 				if tile == 6:
-					if self.level == 2:
-						enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level, self.enemy_moving_int_ranges[i])
-						self.world_enemy_group.add(enemy)
-						i+=1
-					else:
-						enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level, [])
-						self.world_enemy_group.add(enemy)
+					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level)
+					self.world_enemy_group.add(enemy)
 					
 				if tile == 7:
 					img = pygame.transform.scale(grass_img, (tile_size, tile_size))
@@ -246,98 +215,26 @@ class World():
 
 
 
-world_data = [
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 5, 5, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 6, 0, 2, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 1, 2, 0, 0, 2, 3, 2, 0, 0, 0, 0, 6, 0, 0, 0, 2, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 2, 1, 1], 
-[1, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 2, 2, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 2, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 2, 2, 2, 1, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1], 
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
 
-world2_data = [
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 5, 1], 
-[1, 0, 0, 0, 0, 0, 0, 6, 0, 0, 6, 0, 0, 0, 0, 2, 0, 0, 0, 1], 
-[1, 0, 0, 2, 0, 0, 0, 2, 2, 2, 2, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
-[1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],  
-[1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 6, 0, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1], 
-[1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1], 
-[1, 2, 2, 0, 0, 0, 2, 0, 6, 0, 2, 0, 2, 0, 0, 2, 0, 0, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1], 
-[1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1],  
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
-world3_data = [
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 2, 2, 0, 0, 1, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 5, 2, 0, 1], 
-[1, 0, 0, 0, 0, 1, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
-[1, 0, 0, 0, 6, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 1], 
-[1, 0, 0, 2, 2, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
-[1, 6, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 1], 
-[1, 2, 2, 0, 0, 1, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1], 
-[1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1], 
-[1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1], 
-[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 1, 2, 0, 1], 
-[1, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1], 
-[1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1],  
-[1, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1], 
-[1, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 1], 
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
-[1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 1], 
-[1, 0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 1, 0, 0, 0, 2, 3, 0, 0, 1], 
-[1, 4, 4, 4, 1, 4, 4, 1, 1, 4, 4, 1, 4, 4, 4, 1, 1, 4, 4, 1],   
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
-enemy_group = pygame.sprite.Group()
-level = 3
-world = World(world_data, 1, "Level: 1")
-world2 = World(world2_data, 2, "Level: 2")
-world3 = World(world3_data, 3, "Level: 3", [(130, 210), (50, 130)])
-worlds = [world, world2, world3]
+level = 1
+world = World(worlds.world_data, 1, "Level: 1")
+world2 = World(worlds.world2_data, 2, "Level: 2")
+world3 = World(worlds.world3_data, 3, "Level: 3")
+worlds_list = [world, world2, world3]
 
 
 completed = False
 player = Player(level, completed)
-
 clock = pygame.time.Clock()
 FPS = 60
 run = 1
-
-
 while run:
 	clock.tick(FPS)
 	screen.blit(bg_img, (0, 0))
 
-	worlds[level - 1].draw()
-	worlds[level - 1].world_enemy_group.update()
-	worlds[level - 1].world_enemy_group.draw(screen)
+	worlds_list[level - 1].draw()
+	worlds_list[level - 1].world_enemy_group.update()
+	worlds_list[level - 1].world_enemy_group.draw(screen)
 	completed = player.update()
 
 
