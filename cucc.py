@@ -66,6 +66,10 @@ class Player():
 			self.rect.x = 50
 			self.rect.y = screen_height - 900
 		
+		elif self.level == 3:
+			self.rect.x = 100
+			self.rect.y = screen_height - 130
+		
 		self.vel_y = 0
 		self.jumped = False
 		self.width = self.image.get_width()
@@ -198,14 +202,6 @@ class World():
 				if tile == 6:
 					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level)
 					self.world_enemy_group.add(enemy)
-					
-				if tile == 7:
-					img = pygame.transform.scale(grass_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 7)
-					self.tile_list.append(tile)
 
 				col_count += 1
 			row_count += 1
