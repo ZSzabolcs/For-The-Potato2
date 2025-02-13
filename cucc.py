@@ -12,6 +12,8 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('For The Potato')
 tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
+bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
+bg2_img = pygame.transform.scale(bg2_img, (1000,1000))
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -25,9 +27,6 @@ class Enemy(pygame.sprite.Sprite):
 		self.move_direction = 1
 		self.speed = 1
 		self.level = level
-
-		
-
 
 	def update(self):
 		next_x = self.rect.x + self.move_direction * self.speed
@@ -221,11 +220,12 @@ class World():
 
 
 
-level = 1
+level = 4
 world = World(worlds.world_data, 1, "Level: 1")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
-worlds_list = [world, world2, world3]
+world4 = World(worlds.world4_data, 4, "Level: 4")
+worlds_list = [world, world2, world3, world4]
 
 
 completed = False
@@ -237,7 +237,10 @@ pause = 0
 
 while run and not pause:
 	clock.tick(FPS)
-	screen.blit(bg_img, (0, 0))
+	if level < 4:
+		screen.blit(bg_img, (0, 0))
+	elif level >= 4:
+		screen.blit(bg2_img, (0, 0))
 
 	worlds_list[level - 1].draw()
 	worlds_list[level - 1].world_enemy_group.update()
@@ -268,11 +271,5 @@ while run and not pause:
 
 
 	pygame.display.flip()
-
-
-
-
-
-		
 
 pygame.quit()
