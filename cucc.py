@@ -228,7 +228,9 @@ player = Player(level, completed)
 clock = pygame.time.Clock()
 FPS = 60
 run = 1
-while run:
+pause = 0
+
+while run and not pause:
 	clock.tick(FPS)
 	screen.blit(bg_img, (0, 0))
 
@@ -248,9 +250,24 @@ while run:
 		if event.type == pygame.QUIT:
 			run = 0
 
+		elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+			pause = 1
+			run = 0
+
+	while not run and pause:
+		worlds_list[level - 1].draw()
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+				pause = 0
+				run = 1
 
 
 	pygame.display.flip()
 
+
+
+
+
+		
 
 pygame.quit()
