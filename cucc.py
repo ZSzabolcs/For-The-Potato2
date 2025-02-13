@@ -218,7 +218,7 @@ class World():
 				screen.blit(megallitva, megallitva_place)
 				pygame.display.update()
 
-			text = font_size50.render(self.level_name, False, Color.BLACK)
+			text = font_size50.render(self.level_name, False, BLACK)
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
