@@ -62,6 +62,11 @@ class Player():
 		elif self.level == 1:
 			self.rect.x = 100
 			self.rect.y = screen_height - 200
+
+		elif self.level == 2:
+			self.rect.x = 50
+			self.rect.y = screen_height - 900
+		
 		self.vel_y = 0
 		self.jumped = False
 		self.width = self.image.get_width()
