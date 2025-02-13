@@ -4,7 +4,11 @@ import os
 import worlds
 
 pygame.init()
-font = pygame.font.Font(None, 50)
+
+font_size50 = pygame.font.Font(None, 50)
+font_size80 = pygame.font.Font(None, 80)
+
+BLACK = (0, 0, 0)
 
 screen_width = 1000
 screen_height = 1000
@@ -13,7 +17,7 @@ pygame.display.set_caption('For The Potato')
 tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
-bg2_img = pygame.transform.scale(bg2_img, (1000,1000))
+bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -206,9 +210,15 @@ class World():
 				col_count += 1
 			row_count += 1
 
-	def draw(self):
+	def draw(self, pause, run):
 		for tile in self.tile_list:
-			text = font.render(self.level_name, False, (0, 0, 0))
+			if pause and not run:
+				megallitva = font_size80.render("Paused", False, BLACK)
+				megallitva_place = (screen_width // 2 - 80, screen_height // 2)
+				screen.blit(megallitva, megallitva_place)
+				pygame.display.update()
+
+			text = font_size50.render(self.level_name, False, Color.BLACK)
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
@@ -238,7 +248,7 @@ while run and not pause:
 	elif level >= 4:
 		screen.blit(bg2_img, (0, 0))
 
-	worlds_list[level - 1].draw()
+	worlds_list[level - 1].draw(pause, run)
 	worlds_list[level - 1].world_enemy_group.update()
 	worlds_list[level - 1].world_enemy_group.draw(screen)
 	completed = player.update()
@@ -259,11 +269,14 @@ while run and not pause:
 			run = 0
 
 	while not run and pause:
-		worlds_list[level - 1].draw()
+		worlds_list[level - 1].draw(pause, run)
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				pause = 0
 				run = 1
+			elif event.type == pygame.QUIT:
+				pause = 0
+				run = 0
 
 
 	pygame.display.flip()
