@@ -73,6 +73,9 @@ class Player():
 		elif self.level == 3:
 			self.rect.x = 100
 			self.rect.y = screen_height - 130
+		elif self.level == 4:
+			self.rect.x = 100
+			self.rect.y = screen_height - 900
 		
 		self.vel_y = 0
 		self.jumped = False
@@ -158,6 +161,8 @@ class World():
 		goal_img = pygame.image.load(os.path.join("kepek", "goal.png"))
 		water_img = pygame.image.load(os.path.join("kepek", "water.png"))
 		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
+		rock_img = pygame.image.load(os.path.join("kepek", "rock.png"))
+		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
 
 		row_count = 0
 		for row in data:
@@ -206,6 +211,22 @@ class World():
 				if tile == 6:
 					enemy = Enemy(col_count * tile_size, row_count * tile_size + 15, self.level)
 					self.world_enemy_group.add(enemy)
+				
+				if tile == 7:
+					img = pygame.transform.scale(rock_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					tile = (img, img_rect, 7)
+					self.tile_list.append(tile)
+				
+				if tile == 8:
+					img = pygame.transform.scale(lava_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					tile = (img, img_rect, 4)
+					self.tile_list.append(tile)
 
 				col_count += 1
 			row_count += 1
@@ -226,12 +247,13 @@ class World():
 
 
 
-level = 4
+level = 5
 world = World(worlds.world_data, 1, "Level: 1")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
 world4 = World(worlds.world4_data, 4, "Level: 4")
-worlds_list = [world, world2, world3, world4]
+world5 = World(worlds.world5_data, 5, "Level: 5")
+worlds_list = [world, world2, world3, world4, world5]
 
 
 completed = False
