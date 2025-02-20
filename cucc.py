@@ -39,9 +39,9 @@ class Enemy(pygame.sprite.Sprite):
 		self.rect.x += self.move_direction * self.speed
 
 		for tile in worlds_list[self.level].tile_list:
-				if tile[1].collidepoint(self.rect.right, self.rect.midright[1]) and tile[2] == 1:
+				if tile[1].collidepoint(self.rect.right, self.rect.midright[1]) and tile[2] > 0:
 					self.move_direction *= -1
-				if tile[1].collidepoint(self.rect.left, self.rect.midleft[1]) and tile[2] == 1:
+				if tile[1].collidepoint(self.rect.left, self.rect.midleft[1]) and tile[2] > 0:
 					self.move_direction *= -1
 				if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1):
 					ground_beneath_next = True
