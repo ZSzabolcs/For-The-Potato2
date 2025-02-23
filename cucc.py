@@ -10,13 +10,14 @@ font_size80 = pygame.font.Font(None, 80)
 
 BLACK = (0, 0, 0)
 
-screen_width = 1000
+screen_width = 1900
 screen_height = 1000
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('For The Potato')
 tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
+bg_img = pygame.transform.scale(bg_img, (1900, 1000))
 bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
 
 
@@ -247,8 +248,8 @@ class World():
 
 
 
-level = 5
-world = World(worlds.world_data, 1, "Level: 1")
+level = 2
+world = World(worlds.world_data, 1, "Level: 1 - Tutorial")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
 world4 = World(worlds.world4_data, 4, "Level: 4")
