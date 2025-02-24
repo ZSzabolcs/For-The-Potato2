@@ -248,8 +248,8 @@ class World():
 
 
 
-level = 2
-world = World(worlds.world_data, 1, "Level: 1 - Tutorial")
+level = 1
+world = World(worlds.world1_data, 1, "Level: 1")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
 world4 = World(worlds.world4_data, 4, "Level: 4")
