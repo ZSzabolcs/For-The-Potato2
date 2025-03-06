@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import os
 import worlds
+from menu import menu_page
 
 pygame.init()
 
@@ -53,30 +54,13 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Player():
-	def __init__(self, level, completed):
+	def __init__(self, level, completed, x, y):
 		img = pygame.image.load(os.path.join("kepek", "trollface.jpg"))
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
 		self.level = level - 1
-		if self.level == 0:
-			self.rect.x = 100
-			self.rect.y = screen_height - 130
-
-		elif self.level == 1:
-			self.rect.x = 100
-			self.rect.y = screen_height - 200
-
-		elif self.level == 2:
-			self.rect.x = 50
-			self.rect.y = screen_height - 900
-		
-		elif self.level == 3:
-			self.rect.x = 100
-			self.rect.y = screen_height - 130
-		elif self.level == 4:
-			self.rect.x = 100
-			self.rect.y = screen_height - 900
-		
+		self.rect.x = x
+		self.rect.y = y
 		self.vel_y = 0
 		self.jumped = False
 		self.width = self.image.get_width()
@@ -85,6 +69,7 @@ class Player():
 		self.checkpoint_y = self.rect.y
 		self.died = False
 		self.completed = completed
+		self.player_place = None
 
 	def update(self):
 		dx = 0
@@ -154,6 +139,7 @@ class World():
 		self.level_name = level_name
 		self.tile_list = []
 		self.world_enemy_group = pygame.sprite.Group()
+		self.player_place = None
 		
 
 		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
@@ -228,6 +214,9 @@ class World():
 					tile = (img, img_rect, 4)
 					self.tile_list.append(tile)
 
+				if tile == "p":
+					self.player_place = Player(level, False, col_count * tile_size, row_count * tile_size)
+
 				col_count += 1
 			row_count += 1
 
@@ -244,10 +233,11 @@ class World():
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
 
+	def get_player(self):
+		return self.player_place
 
 
-
-level = 5
+level = 1
 world = World(worlds.world_data, 1, "Level: 1")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
@@ -257,7 +247,6 @@ worlds_list = [world, world2, world3, world4, world5]
 
 
 completed = False
-player = Player(level, completed)
 clock = pygame.time.Clock()
 FPS = 60
 run = 1
@@ -271,6 +260,7 @@ while run and not pause:
 		screen.blit(bg2_img, (0, 0))
 
 	worlds_list[level - 1].draw(pause, run)
+	player = worlds_list[level - 1].get_player()
 	worlds_list[level - 1].world_enemy_group.update()
 	worlds_list[level - 1].world_enemy_group.draw(screen)
 	completed = player.update()
@@ -279,7 +269,7 @@ while run and not pause:
 	if completed == True:
 		level += 1
 		completed = False
-		player = Player(level, completed)
+		player = Player(level, completed, player.checkpoint_x, player.checkpoint_y)
 		continue
 
 	for event in pygame.event.get():
