@@ -2,75 +2,28 @@ import pygame
 from pygame.locals import *
 import os
 import worlds
-from menu import menu_page
 
 pygame.init()
 
-class Font_types():
-	fonts = {
-	"40" : pygame.font.Font(None, 40),
-	"50" : pygame.font.Font(None, 50),
-	"80" : pygame.font.Font(None, 80)
-	}
-
-"""
-infos = pygame.display.Info()
-
-screen_width, screen_height = infos.current_w, infos.current_h
-
-resolutions = [(1920, 1080), (1760, 990), (1680, 1050), (1600, 900), (1440, 900), (1366, 768), (1280, 1024), (1280, 800), (1280, 720), (1152, 870), (1152, 864), (1128, 634), (1024, 768), (832, 624), (800, 600)]
-print(len(resolutions))
-
-index = -1
-for i in range(len(resolutions)):
-	if resolutions[i][0] == screen_width and resolutions[i][1] == screen_height:
-		print("Megvan!")
-		index = i
-
-d = -1.42857142857143
-tile_size = 50
-if i == 0:
-	tile_size = 50
-else:
-	tile_size += i*(d)
-
-tile_size = int(tile_size)
-"""
-
+font_size50 = pygame.font.Font(None, 50)
+font_size80 = pygame.font.Font(None, 80)
 
 BLACK = (0, 0, 0)
 
-
-infos = pygame.display.Info()
-screen_width, screen_height = infos.current_w, infos.current_h
-resolutions = [(1920, 1080), (1760, 990), (1680, 1050), (1600, 900), (1440, 900), (1366, 768), (1280, 1024), 
-			   (1280, 800), (1280, 720), (1152, 870), (1152, 864), (1128, 634), (1024, 768), (832, 624), (800, 600)]
-
-action = menu_page(screen_width, screen_height, Font_types.fonts, resolutions)
-
-if action == 1:
-	run = 1
-else:
-	run = 0
-
-tile_size = 50
-
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN|pygame.SCALED)
+screen_width = 1000
+screen_height = 1000
+screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('For The Potato')
-
-
+tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
-
-
-bg_img = pygame.transform.scale(bg_img, (1000, 1000))
 bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
 
 
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
-		img = pygame.image.load(os.path.join("kepek", "enemy.png"))
+		img = pygame.image.load(os.path.join("kepek", "enemy.png")).convert()
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
 		self.rect.x = x
@@ -100,13 +53,30 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Player():
-	def __init__(self, level, completed, x, y):
+	def __init__(self, level, completed):
 		img = pygame.image.load(os.path.join("kepek", "trollface.jpg"))
 		self.image = pygame.transform.scale(img, (40, 40))
 		self.rect = self.image.get_rect()
-		self.rect.x = x
-		self.rect.y = y
 		self.level = level - 1
+		if self.level == 0:
+			self.rect.x = 100
+			self.rect.y = screen_height - 130
+
+		elif self.level == 1:
+			self.rect.x = 100
+			self.rect.y = screen_height - 200
+
+		elif self.level == 2:
+			self.rect.x = 50
+			self.rect.y = screen_height - 900
+		
+		elif self.level == 3:
+			self.rect.x = 100
+			self.rect.y = screen_height - 130
+		elif self.level == 4:
+			self.rect.x = 100
+			self.rect.y = screen_height - 900
+		
 		self.vel_y = 0
 		self.jumped = False
 		self.width = self.image.get_width()
@@ -184,7 +154,6 @@ class World():
 		self.level_name = level_name
 		self.tile_list = []
 		self.world_enemy_group = pygame.sprite.Group()
-		self.player_place = None
 		
 
 		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
@@ -258,9 +227,6 @@ class World():
 					img_rect.y = row_count * tile_size
 					tile = (img, img_rect, 4)
 					self.tile_list.append(tile)
-				
-				if tile == "p":
-					self.player_place = Player(level, False, col_count * tile_size, row_count * tile_size)
 
 				col_count += 1
 			row_count += 1
@@ -268,23 +234,21 @@ class World():
 	def draw(self, pause, run):
 		for tile in self.tile_list:
 			if pause and not run:
-				megallitva = Font_types.fonts["80"].render("Paused", False, BLACK)
+				megallitva = font_size80.render("Paused", False, BLACK)
 				megallitva_place = (screen_width // 2 - 80, screen_height // 2)
 				screen.blit(megallitva, megallitva_place)
 				pygame.display.update()
 
-			text = Font_types.fonts["50"].render(self.level_name, False, BLACK)
+			text = font_size50.render(self.level_name, False, BLACK)
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
-	
-	def get_player(self):
-		return self.player_place
+
 
 
 
 level = 5
-world = World(worlds.world_data, 1, "Level: 1 - Tutorial")
+world = World(worlds.world_data, 1, "Level: 1")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
 world4 = World(worlds.world4_data, 4, "Level: 4")
@@ -293,9 +257,10 @@ worlds_list = [world, world2, world3, world4, world5]
 
 
 completed = False
+player = Player(level, completed)
 clock = pygame.time.Clock()
 FPS = 60
-
+run = 1
 pause = 0
 
 while run and not pause:
@@ -306,16 +271,15 @@ while run and not pause:
 		screen.blit(bg2_img, (0, 0))
 
 	worlds_list[level - 1].draw(pause, run)
-	player = worlds_list[level - 1].get_player()
-	completed = player.update()
 	worlds_list[level - 1].world_enemy_group.update()
 	worlds_list[level - 1].world_enemy_group.draw(screen)
+	completed = player.update()
 
 
 	if completed == True:
 		level += 1
 		completed = False
-		player = Player(level, completed, player.checkpoint_x, player.checkpoint_y)
+		player = Player(level, completed)
 		continue
 
 	for event in pygame.event.get():
