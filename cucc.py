@@ -3,23 +3,10 @@ from pygame.locals import *
 import os
 import worlds
 from menu import menu_page
-
-pygame.init()
-
-font_size50 = pygame.font.Font(None, 50)
-font_size80 = pygame.font.Font(None, 80)
-
-BLACK = (0, 0, 0)
-
-screen_width = 1000
-screen_height = 1000
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('For The Potato')
-tile_size = 50
-bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
-bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
-bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
-
+from styles import BLACK
+from styles import RED
+from styles import BLUE
+from styles import Selected_fonts
 
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y, level):
@@ -50,7 +37,6 @@ class Enemy(pygame.sprite.Sprite):
 		if not ground_beneath_next:
 			self.move_direction *= -1
 
-		
 
 
 class Player():
@@ -131,6 +117,7 @@ class Player():
 			self.died = False
 
 		screen.blit(self.image, self.rect)
+
 
 
 class World():
@@ -220,24 +207,55 @@ class World():
 				col_count += 1
 			row_count += 1
 
-	def draw(self, pause, run):
+	def draw(self, pause, run, mouse):
 		for tile in self.tile_list:
 			if pause and not run:
-				megallitva = font_size80.render("Paused", False, BLACK)
-				megallitva_place = (screen_width // 2 - 80, screen_height // 2)
+				megallitva = fonts.font_size80.render("Paused", False, BLACK)
+				megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 200)
+				for rect in in_game_menu_rects:
+					square = pygame.draw.rect(screen, BLACK, rect)
+					if square.collidepoint(float(mouse[0]), float(mouse[1])):
+						square = pygame.draw.rect(screen, BLUE, rect)
+				quit_game_text = fonts.font_size50.render("Quit game", 0, RED)
+				quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.17), in_game_menu_rects[0].center[1]-15)
 				screen.blit(megallitva, megallitva_place)
+				screen.blit(quit_game_text, quit_game_text_place)
 				pygame.display.update()
 
-			text = font_size50.render(self.level_name, False, BLACK)
+			text = fonts.font_size50.render(self.level_name, False, BLACK)
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
+
 
 	def get_player(self):
 		return self.player_place
 
 
-level = 1
+
+
+pygame.init()
+
+fonts = Selected_fonts()
+
+screen_width = 1000
+screen_height = 1000
+
+datas = menu_page(screen_height, screen_height, fonts)
+
+points = datas[0]
+level = datas[1]
+run = 1
+		
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption('For The Potato')
+tile_size = 50
+bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
+bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
+bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
+
+
+
 world = World(worlds.world_data, 1, "Level: 1")
 world2 = World(worlds.world2_data, 2, "Level: 2")
 world3 = World(worlds.world3_data, 3, "Level: 3")
@@ -245,21 +263,23 @@ world4 = World(worlds.world4_data, 4, "Level: 4")
 world5 = World(worlds.world5_data, 5, "Level: 5")
 worlds_list = [world, world2, world3, world4, world5]
 
-
+in_game_menu_rects = [
+	pygame.rect.Rect(screen_width/2 - 100, screen_height/2, screen_width*0.25, screen_width*0.1)
+]
 completed = False
 clock = pygame.time.Clock()
 FPS = 60
-run = 1
 pause = 0
 
 while run and not pause:
 	clock.tick(FPS)
+	mouse = pygame.mouse.get_pos()
 	if level < 4:
 		screen.blit(bg_img, (0, 0))
 	elif level >= 4:
 		screen.blit(bg2_img, (0, 0))
 
-	worlds_list[level - 1].draw(pause, run)
+	worlds_list[level - 1].draw(pause, run, mouse)
 	player = worlds_list[level - 1].get_player()
 	worlds_list[level - 1].world_enemy_group.update()
 	worlds_list[level - 1].world_enemy_group.draw(screen)
@@ -281,7 +301,8 @@ while run and not pause:
 			run = 0
 
 	while not run and pause:
-		worlds_list[level - 1].draw(pause, run)
+		mouse = pygame.mouse.get_pos()
+		worlds_list[level - 1].draw(pause, run, mouse)
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				pause = 0
