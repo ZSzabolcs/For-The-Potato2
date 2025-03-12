@@ -6,6 +6,8 @@ from menu import menu_page
 from styles import BLACK
 from styles import RED
 from styles import BLUE
+from styles import set_language
+from styles import languages
 from styles import Selected_fonts
 
 class Enemy(pygame.sprite.Sprite):
@@ -207,14 +209,14 @@ class World():
 				col_count += 1
 			row_count += 1
 
-	def draw(self, pause, run, mouse):
+	def draw(self, pause, run, mouse = None):
 		for tile in self.tile_list:
 			if pause and not run:
 				megallitva = fonts.font_size80.render("Paused", False, BLACK)
 				megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 200)
 				for rect in in_game_menu_rects:
 					square = pygame.draw.rect(screen, BLACK, rect)
-					if square.collidepoint(float(mouse[0]), float(mouse[1])):
+					if square.collidepoint(float(mouse[0]), float(mouse[1])) and mouse is not None:
 						square = pygame.draw.rect(screen, BLUE, rect)
 				quit_game_text = fonts.font_size50.render("Quit game", 0, RED)
 				quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.17), in_game_menu_rects[0].center[1]-15)
@@ -233,7 +235,6 @@ class World():
 
 
 
-
 pygame.init()
 
 fonts = Selected_fonts()
@@ -241,14 +242,22 @@ fonts = Selected_fonts()
 screen_width = 1000
 screen_height = 1000
 
-datas = menu_page(screen_height, screen_height, fonts)
+choosen_language = set_language()
+
+datas = menu_page(screen_height, screen_height, fonts, choosen_language, languages)
+
+background_music = pygame.mixer.Sound("Jazz In Paris  Media Right Productions (No Copyright Music).mp3")
+background_music.set_volume(0.6)
+background_music.play(-1)
+
 
 points = datas[0]
 level = datas[1]
+choosen_language = datas[2]
 run = 1
 		
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('For The Potato')
+pygame.display.set_caption(languages[choosen_language][0])
 tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
@@ -256,16 +265,17 @@ bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
 
 
 
-world = World(worlds.world_data, 1, "Level: 1")
-world2 = World(worlds.world2_data, 2, "Level: 2")
-world3 = World(worlds.world3_data, 3, "Level: 3")
-world4 = World(worlds.world4_data, 4, "Level: 4")
-world5 = World(worlds.world5_data, 5, "Level: 5")
+world = World(worlds.world_data, 1, f"{languages[choosen_language][6][0]}: 1")
+world2 = World(worlds.world2_data, 2, f"{languages[choosen_language][6][0]}: 2")
+world3 = World(worlds.world3_data, 3, f"{languages[choosen_language][6][0]}: 3")
+world4 = World(worlds.world4_data, 4, f"{languages[choosen_language][6][0]}: 4")
+world5 = World(worlds.world5_data, 5, f"{languages[choosen_language][6][0]}: 5")
 worlds_list = [world, world2, world3, world4, world5]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width/2 - 100, screen_height/2, screen_width*0.25, screen_width*0.1)
 ]
+
 completed = False
 clock = pygame.time.Clock()
 FPS = 60
@@ -273,13 +283,12 @@ pause = 0
 
 while run and not pause:
 	clock.tick(FPS)
-	mouse = pygame.mouse.get_pos()
 	if level < 4:
 		screen.blit(bg_img, (0, 0))
 	elif level >= 4:
 		screen.blit(bg2_img, (0, 0))
 
-	worlds_list[level - 1].draw(pause, run, mouse)
+	worlds_list[level - 1].draw(pause, run)
 	player = worlds_list[level - 1].get_player()
 	worlds_list[level - 1].world_enemy_group.update()
 	worlds_list[level - 1].world_enemy_group.draw(screen)
@@ -300,6 +309,8 @@ while run and not pause:
 			pause = 1
 			run = 0
 
+
+
 	while not run and pause:
 		mouse = pygame.mouse.get_pos()
 		worlds_list[level - 1].draw(pause, run, mouse)
@@ -310,7 +321,11 @@ while run and not pause:
 			elif event.type == pygame.QUIT:
 				pause = 0
 				run = 0
-
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				for rect in in_game_menu_rects:
+					if rect.collidepoint(float(mouse[0]), float(mouse[1])):
+						if in_game_menu_rects.index(rect) == 0:
+							pause, run = 0, 0
 
 	pygame.display.flip()
 
