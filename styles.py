@@ -25,7 +25,8 @@ languages = {
 		"Quit game",
 		"There is no saves!",
 		[
-			"Level"
+			"Level",
+			"Paused"
 		]
 	],
 
@@ -37,7 +38,8 @@ languages = {
 		"Kilépés a játékból",
 		"Nincsenek mentések!",
 		[
-			"Szint"
+			"Szint",
+			"Megállítva"
 		]
 	]
 }
