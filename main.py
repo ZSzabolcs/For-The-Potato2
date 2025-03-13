@@ -125,6 +125,7 @@ class Player():
 
 class World():
 	def __init__(self, data, level, level_name):
+		self.world_map = data
 		self.level = level - 1
 		self.level_name = level_name
 		self.tile_list = []
@@ -141,7 +142,7 @@ class World():
 		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
 
 		row_count = 0
-		for row in data:
+		for row in self.world_map:
 			col_count = 0
 			for tile in row:
 				if tile == 1:
@@ -213,7 +214,7 @@ class World():
 	def draw(self, pause, run, lang, ch_lang, mouse = None):
 		for tile in self.tile_list:
 			if pause and not run:
-				megallitva = fonts.font_size80.render(lang[ch_lang][6][1], False, BLACK)
+				megallitva = fonts.font_size80.render(lang[ch_lang]["in game"][1], False, BLACK)
 				if ch_lang == "en":
 					megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 200)
 					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.17), in_game_menu_rects[0].center[1]-15)
@@ -258,14 +259,18 @@ choosen_language = set_language()
 
 datas = menu_page(screen_height, screen_height, fonts, choosen_language, languages)
 
-background_music = pygame.mixer.Sound("Jazz In Paris  Media Right Productions (No Copyright Music).mp3")
-background_music.set_volume(0.6)
-background_music.play(-1)
-
-
 points = datas[0]
 level = datas[1]
 choosen_language = datas[2]
+music_is_on = datas[3]
+
+if music_is_on:
+	background_music = pygame.mixer.Sound("Jazz In Paris  Media Right Productions (No Copyright Music).mp3")
+	background_music.set_volume(0.6)
+	background_music.play(-1)
+
+
+
 run = 1
 		
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -277,14 +282,14 @@ bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
 bg3_img = pygame.image.load(os.path.join("kepek", "hatter3.png")).convert()
 bg3_img = pygame.transform.scale(bg3_img, (1000, 1000))
 
+level_name = languages[choosen_language]["in game"][0]
 
-
-world = World(worlds.world_data, 1, f"{languages[choosen_language][6][0]}: 1")
-world2 = World(worlds.world2_data, 2, f"{languages[choosen_language][6][0]}: 2")
-world3 = World(worlds.world3_data, 3, f"{languages[choosen_language][6][0]}: 3")
-world4 = World(worlds.world4_data, 4, f"{languages[choosen_language][6][0]}: 4")
-world5 = World(worlds.world5_data, 5, f"{languages[choosen_language][6][0]}: 5")
-world6 = World(worlds.world6_data, 6, f"{languages[choosen_language][6][0]}: 6")
+world = World(worlds.world_data, 1, f"{level_name}: 1")
+world2 = World(worlds.world2_data, 2, f"{level_name}: 2")
+world3 = World(worlds.world3_data, 3, f"{level_name}: 3")
+world4 = World(worlds.world4_data, 4, f"{level_name}: 4")
+world5 = World(worlds.world5_data, 5, f"{level_name}: 5")
+world6 = World(worlds.world6_data, 6, f"{level_name}: 6")
 worlds_list = [world, world2, world3, world4, world5, world6]
 
 in_game_menu_rects = [

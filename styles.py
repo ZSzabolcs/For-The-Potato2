@@ -17,31 +17,39 @@ def set_language():
 		print("Nem létezik a fájl!")
 
 languages = {
-	"en" : [
-		"For The Potato!",
-		"New game",
-		"Continue game",
-		"Game language: English",
-		"Quit game",
-		"There is no saves!",
-		[
-			"Level",
-			"Paused"
-		]
-	],
+	"en" : {
+		0: "For The Potato!",
+		1: "New game",
+		2: "Continue game",
+		3: "Game language: English",
+		4: [ 
+			"Music: On",
+	  		"Music: Off"
+		],
+		5: "Quit game",
+		6: "There is no saves!",
+		"in game":{
+			0: "Level",
+			1: "Paused"
+		}
+	},
 
-	"hu" :[
-		"A burgonyáért!",
-		"Új játék",
-		"Játék folytatása",
-		"Játék nyelve: Magyar",
-		"Kilépés a játékból",
-		"Nincsenek mentések!",
-		[
-			"Szint",
-			"Megállítva"
-		]
-	]
+	"hu" :{
+		0: "A burgonyáért!",
+		1: "Új játék",
+		2: "Játék folytatása",
+		3: "Játék nyelve: Magyar",
+		4: [
+			"Zene: Be",
+	  		"Zene: Ki"
+		],
+		5: "Kilépés a játékból",
+		6: "Nincsenek mentések!",
+		"in game":{
+			0:"Szint",
+			1:"Megállítva"
+		}
+	}
 }
 
 class Selected_fonts:
@@ -55,3 +63,4 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+WHITE = (255, 255, 255)
