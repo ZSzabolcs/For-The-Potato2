@@ -290,7 +290,8 @@ world3 = World(worlds.world3_data, 3, f"{level_name}: 3")
 world4 = World(worlds.world4_data, 4, f"{level_name}: 4")
 world5 = World(worlds.world5_data, 5, f"{level_name}: 5")
 world6 = World(worlds.world6_data, 6, f"{level_name}: 6")
-worlds_list = [world, world2, world3, world4, world5, world6]
+world7 = World(worlds.world7_data, 7, f"{level_name}: 7")
+worlds_list = [world, world2, world3, world4, world5, world6, world7]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
