@@ -274,6 +274,8 @@ tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
 bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
 bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
+bg3_img = pygame.image.load(os.path.join("kepek", "hatter3.png")).convert()
+bg3_img = pygame.transform.scale(bg3_img, (1000, 1000))
 
 
 
@@ -282,7 +284,8 @@ world2 = World(worlds.world2_data, 2, f"{languages[choosen_language][6][0]}: 2")
 world3 = World(worlds.world3_data, 3, f"{languages[choosen_language][6][0]}: 3")
 world4 = World(worlds.world4_data, 4, f"{languages[choosen_language][6][0]}: 4")
 world5 = World(worlds.world5_data, 5, f"{languages[choosen_language][6][0]}: 5")
-worlds_list = [world, world2, world3, world4, world5]
+world6 = World(worlds.world6_data, 6, f"{languages[choosen_language][6][0]}: 6")
+worlds_list = [world, world2, world3, world4, world5, world6]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
@@ -298,8 +301,10 @@ async def main(run, pause, completed, clock, level):
 		clock.tick(FPS)
 		if level < 4:
 			screen.blit(bg_img, (0, 0))
-		elif level >= 4:
+		elif level >= 4 and level <= 5:
 			screen.blit(bg2_img, (0, 0))
+		elif level >= 6:
+			screen.blit(bg3_img, (0, 0))
 
 		worlds_list[level - 1].draw(pause, run, languages, choosen_language)
 		player = worlds_list[level - 1].get_player()
