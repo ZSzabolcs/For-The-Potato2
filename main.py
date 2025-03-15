@@ -3,6 +3,7 @@ from pygame.locals import *
 import os
 import worlds
 import asyncio
+import time
 from menu import menu_page
 from styles import BLACK
 from styles import RED
@@ -106,6 +107,17 @@ class Player():
 				else: 
 					self.died = True
 
+		for block in worlds_list[self.level].blocks:
+			if block.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+				if key[pygame.K_UP] == False:
+					self.jumped = False
+				if self.vel_y < 0 and block.visible:
+					dy = block.rect.bottom - self.rect.top
+					self.vel_y = 0					
+				elif self.vel_y >= 0 and block.visible:
+					dy = block.rect.top - self.rect.bottom
+					self.vel_y = 0
+
 		if self.rect.bottom > screen_height:
 			self.rect.bottom = screen_height
 			dy = 0
@@ -131,6 +143,7 @@ class World():
 		self.tile_list = []
 		self.world_enemy_group = pygame.sprite.Group()
 		self.player_place = None
+		self.blocks = []
 		
 
 		dirt_img = pygame.image.load(os.path.join("kepek", "dirt.png"))
@@ -205,13 +218,22 @@ class World():
 					tile = (img, img_rect, 4)
 					self.tile_list.append(tile)
 
+				if tile == "b1":
+					image = pygame.transform.scale(rock_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					block = Block(img_rect.x, img_rect.y, image, 2)
+					self.blocks.append(block)
+
 				if tile == "p":
 					self.player_place = Player(level, False, col_count * tile_size, row_count * tile_size)
 
 				col_count += 1
 			row_count += 1
 
-	def draw(self, pause, run, lang, ch_lang, mouse = None):
+
+	def draw(self, pause, run, lang, ch_lang, mouse = None, ):
 		for tile in self.tile_list:
 			if pause and not run:
 				megallitva = fonts.font_size80.render(lang[ch_lang]["in game"][1], False, BLACK)
@@ -234,10 +256,16 @@ class World():
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
-
+			
+	def draw_broken_blocks(self):
+		for bloc in self.blocks:
+			bloc.update()
+			bloc.draw(screen)
 
 	def get_player(self):
 		return self.player_place
+
+
 
 
 
@@ -245,6 +273,29 @@ def saving_game(points, level, choosen_lang):
 	with open("saves.csv", "w") as file:
 		file.write(f"{str(points)} {str(level)} {choosen_lang}")
 		file.close()
+
+
+class Block(pygame.sprite.Sprite):
+	def __init__(self, x, y, image, second):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = image
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
+		self.visible = True
+		self.last_toggle_time = time.time()
+		self.sec = second
+
+	def update(self):
+		current_time = time.time()
+		if current_time - self.last_toggle_time > self.sec:
+			self.visible = not self.visible
+			self.last_toggle_time = current_time
+
+	def draw(self, surface):
+		if self.visible:
+			surface.blit(self.image, self.rect)
+
 
 
 
@@ -302,6 +353,9 @@ clock = pygame.time.Clock()
 FPS = 60
 pause = 0
 
+current_world = worlds_list[level - 1]
+
+
 async def main(run, pause, completed, clock, level):
 	while run and not pause:
 		clock.tick(FPS)
@@ -312,10 +366,12 @@ async def main(run, pause, completed, clock, level):
 		elif level >= 6:
 			screen.blit(bg3_img, (0, 0))
 
-		worlds_list[level - 1].draw(pause, run, languages, choosen_language)
-		player = worlds_list[level - 1].get_player()
-		worlds_list[level - 1].world_enemy_group.update()
-		worlds_list[level - 1].world_enemy_group.draw(screen)
+
+		current_world.draw(pause, run, languages, choosen_language)
+		current_world.draw_broken_blocks()
+		player = current_world.get_player()
+		current_world.world_enemy_group.update()
+		current_world.world_enemy_group.draw(screen)
 		completed = player.update()
 
 
@@ -337,7 +393,7 @@ async def main(run, pause, completed, clock, level):
 
 		while not run and pause:
 			mouse = pygame.mouse.get_pos()
-			worlds_list[level - 1].draw(pause, run, languages, choosen_language, mouse)
+			current_world.draw(pause, run, languages, choosen_language, mouse)
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 					pause = 0
@@ -351,6 +407,7 @@ async def main(run, pause, completed, clock, level):
 							if in_game_menu_rects.index(rect) == 0:
 								pause, run = 0, 0
 								saving_game(points, level, choosen_language)
+
 
 
 		pygame.display.flip()
