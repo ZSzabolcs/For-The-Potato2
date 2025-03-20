@@ -91,8 +91,8 @@ class Player():
 				if tile[2] == 4:
 					self.died = True
 				if tile[2] == 3:
-					self.checkpoint_x = tile[3]
-					self.checkpoint_y = tile[4]
+					self.checkpoint_x = tile[1].x
+					self.checkpoint_y = tile[1].y
 				if tile[2] == 5:
 					return True
 		
@@ -135,7 +135,10 @@ class Player():
 
 
 
+
 class World():
+
+
 	def __init__(self, data, level, level_name):
 		self.world_map = data
 		self.level = level - 1
@@ -159,19 +162,11 @@ class World():
 			col_count = 0
 			for tile in row:
 				if tile == 1:
-					img = pygame.transform.scale(dirt_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 1)
+					tile = make_tile(dirt_img, tile_size, col_count, row_count, 1)
 					self.tile_list.append(tile)
 
 				if tile == 2:
-					img = pygame.transform.scale(grass_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 2)
+					tile = make_tile(grass_img, tile_size, col_count, row_count, 2)
 					self.tile_list.append(tile)
 					
 				if tile == 3:
@@ -226,6 +221,14 @@ class World():
 					block = Block(img_rect.x, img_rect.y, image, 2)
 					self.blocks.append(block)
 
+				if tile == "b2":
+					image = pygame.transform.scale(rock_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					block = Block(img_rect.x, img_rect.y, image, 3)
+					self.blocks.append(block)
+
 				if tile == "p":
 					self.player_place = Player(level, False, col_count * tile_size, row_count * tile_size)
 
@@ -266,7 +269,13 @@ class World():
 		return self.player_place
 
 
-
+def make_tile(image, tile_size, column, row, number):
+	img = pygame.transform.scale(image, (tile_size, tile_size))
+	img_rect = img.get_rect()
+	img_rect.x = column * tile_size
+	img_rect.y = row * tile_size
+	tile = (img, img_rect, number)
+	return tile
 
 
 def saving_game(points, level, choosen_lang):

@@ -14,7 +14,7 @@ def start_new_game(ch_lang):
 
 
 def no_saves_warning(window, window_width, window_height, fonts, ch_lang, languages):
-    do_not_have_saves = fonts.font_size100.render(languages[ch_lang][5], 0, BLUE, BLACK)
+    do_not_have_saves = fonts.font_size100.render(languages[ch_lang][6], 0, BLUE, BLACK)
     do_not_have_saves_place = ((window_width/2-window_width*0.3), window_height*0.4)
     window.blit(do_not_have_saves, do_not_have_saves_place)
     pygame.display.update()
@@ -124,7 +124,7 @@ def menu_page(window_width, window_height, fonts, ch_lang, languages):
                     if rect.collidepoint(float(mouse[0]), float(mouse[1])):
                         if rects.index(rect) == 0:
                             try:
-                                start_new_game(ch_lang, music_is_on)
+                                start_new_game(ch_lang)
                                 data = load_saved_state(ch_lang, music_is_on)
                                 run = 0
                                 return data
