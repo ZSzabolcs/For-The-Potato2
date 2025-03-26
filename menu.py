@@ -6,6 +6,7 @@ from styles import RED
 from styles import BLACK
 from styles import BLUE
 
+
 def start_new_game(ch_lang):
     with open("saves.csv", "w") as file:
         file.write(f"0 1 {ch_lang}")

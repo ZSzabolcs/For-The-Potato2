@@ -12,6 +12,7 @@ from styles import set_language
 from styles import languages
 from styles import Selected_fonts
 
+
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
@@ -422,5 +423,6 @@ async def main(level):
 			file.write(f"{points} {level} {choosen_language}")
 			file.close()
 		pygame.quit()
+
 
 asyncio.run(main(level))
