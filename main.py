@@ -305,7 +305,6 @@ class Block(pygame.sprite.Sprite):
 
 
 
-
 pygame.init()
 
 fonts = Selected_fonts()
