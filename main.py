@@ -25,6 +25,7 @@ class Enemy(pygame.sprite.Sprite):
 		self.speed = 1
 		self.level = level
 
+
 	def update(self):
 		next_x = self.rect.x + self.move_direction * self.speed
 		next_bottom = self.rect.bottom + 1
@@ -61,6 +62,7 @@ class Player():
 		self.died = False
 		self.completed = completed
 		self.player_place = None
+
 
 	def update(self):
 		dx = 0
@@ -417,6 +419,7 @@ async def main(level):
 
 		pygame.display.flip()
 		await asyncio.sleep(0)
+
 
 	if not run and not pause:
 		with open("saves.csv", "w") as file:
