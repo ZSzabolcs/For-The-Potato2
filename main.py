@@ -12,7 +12,6 @@ from styles import set_language
 from styles import languages
 from styles import Selected_fonts
 
-
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
@@ -24,7 +23,6 @@ class Enemy(pygame.sprite.Sprite):
 		self.move_direction = 1
 		self.speed = 1
 		self.level = level
-
 
 	def update(self):
 		next_x = self.rect.x + self.move_direction * self.speed
@@ -62,7 +60,6 @@ class Player():
 		self.died = False
 		self.completed = completed
 		self.player_place = None
-
 
 	def update(self):
 		dx = 0
@@ -215,19 +212,19 @@ class World():
 					self.tile_list.append(tile)
 
 				if tile == "b1":
-					image = pygame.transform.scale(rock_img, (tile_size, tile_size))
+					img = pygame.transform.scale(rock_img, (tile_size, tile_size))
 					img_rect = img.get_rect()
 					img_rect.x = col_count * tile_size
 					img_rect.y = row_count * tile_size
-					block = Block(img_rect.x, img_rect.y, image, 2)
+					block = Block(img_rect.x, img_rect.y, img, 2)
 					self.blocks.append(block)
 
 				if tile == "b2":
-					image = pygame.transform.scale(rock_img, (tile_size, tile_size))
+					img = pygame.transform.scale(grass_img, (tile_size, tile_size))
 					img_rect = img.get_rect()
 					img_rect.x = col_count * tile_size
 					img_rect.y = row_count * tile_size
-					block = Block(img_rect.x, img_rect.y, image, 3)
+					block = Block(img_rect.x, img_rect.y, img, 3)
 					self.blocks.append(block)
 
 				if tile == "p":
@@ -420,12 +417,10 @@ async def main(level):
 		pygame.display.flip()
 		await asyncio.sleep(0)
 
-
 	if not run and not pause:
 		with open("saves.csv", "w") as file:
 			file.write(f"{points} {level} {choosen_language}")
 			file.close()
 		pygame.quit()
-
 
 asyncio.run(main(level))
