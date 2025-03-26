@@ -137,8 +137,6 @@ class Player():
 
 
 class World():
-
-
 	def __init__(self, data, level, level_name):
 		self.world_map = data
 		self.level = level - 1
@@ -330,8 +328,6 @@ if music_is_on:
 	background_music.play(-1)
 
 
-
-run = 1
 		
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption(languages[choosen_language][0])
@@ -357,16 +353,16 @@ in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
 ]
 
-completed = False
-clock = pygame.time.Clock()
-FPS = 60
-pause = 0
-
-current_world = worlds_list[level - 1]
 
 
-async def main(run, pause, completed, clock, level):
+async def main(level):
+	run = 1
+	completed = False
+	clock = pygame.time.Clock()
+	FPS = 60
+	pause = 0
 	while run and not pause:
+		current_world = worlds_list[level - 1]
 		clock.tick(FPS)
 		if level < 4:
 			screen.blit(bg_img, (0, 0))
@@ -378,7 +374,7 @@ async def main(run, pause, completed, clock, level):
 
 		current_world.draw(pause, run, languages, choosen_language)
 		current_world.draw_broken_blocks()
-		player = current_world.get_player()
+		player = worlds_list[level - 1].get_player()
 		current_world.world_enemy_group.update()
 		current_world.world_enemy_group.draw(screen)
 		completed = player.update()
@@ -422,6 +418,10 @@ async def main(run, pause, completed, clock, level):
 		pygame.display.flip()
 		await asyncio.sleep(0)
 
-	pygame.quit()
+	if not run and not pause:
+		with open("saves.csv", "w") as file:
+			file.write(f"{points} {level} {choosen_language}")
+			file.close()
+		pygame.quit()
 
-asyncio.run(main(run, pause, completed, clock, level))
+asyncio.run(main(level))
