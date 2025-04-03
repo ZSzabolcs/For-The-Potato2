@@ -156,7 +156,6 @@ class World():
 		rock_img = pygame.image.load(os.path.join("kepek", "rock.png"))
 		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
 		snow_img = pygame.image.load(os.path.join("kepek", "snow.png"))
-		snow2_img = pygame.image.load(os.path.join("kepek", "snow2.png"))
 
 		row_count = 0
 		for row in self.world_map:
@@ -214,14 +213,6 @@ class World():
 					tile = (img, img_rect, 4)
 					self.tile_list.append(tile)
 				
-				if tile == 9:
-					img = pygame.transform.scale(snow2_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 9)
-					self.tile_list.append(tile)
-				
 				if tile == 10:
 					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
 					img_rect = img.get_rect()
@@ -252,6 +243,22 @@ class World():
 					img_rect.x = col_count * tile_size
 					img_rect.y = row_count * tile_size
 					block = Block(img_rect.x, img_rect.y, img, 3)
+					self.blocks.append(block)
+
+				if tile == "b3":
+					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					block = Block(img_rect.x, img_rect.y, img, 2)
+					self.blocks.append(block)
+
+				if tile == "b4":
+					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					block = Block(img_rect.x, img_rect.y, img, 2)
 					self.blocks.append(block)
 
 				if tile == "p":
