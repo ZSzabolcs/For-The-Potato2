@@ -151,9 +151,11 @@ class World():
 		grass_img = pygame.image.load(os.path.join("kepek","grass.png"))
 		goal_img = pygame.image.load(os.path.join("kepek", "goal.png"))
 		water_img = pygame.image.load(os.path.join("kepek", "water.png"))
+		water2_img = pygame.image.load(os.path.join("kepek", "water2.png"))
 		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
 		rock_img = pygame.image.load(os.path.join("kepek", "rock.png"))
 		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
+		snow_img = pygame.image.load(os.path.join("kepek", "snow.png"))
 		snow2_img = pygame.image.load(os.path.join("kepek", "snow2.png"))
 
 		row_count = 0
@@ -214,6 +216,22 @@ class World():
 				
 				if tile == 9:
 					img = pygame.transform.scale(snow2_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					tile = (img, img_rect, 9)
+					self.tile_list.append(tile)
+				
+				if tile == 10:
+					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
+					img_rect = img.get_rect()
+					img_rect.x = col_count * tile_size
+					img_rect.y = row_count * tile_size
+					tile = (img, img_rect, 10)
+					self.tile_list.append(tile)
+
+				if tile == 11:
+					img = pygame.transform.scale(water2_img, (tile_size, tile_size))
 					img_rect = img.get_rect()
 					img_rect.x = col_count * tile_size
 					img_rect.y = row_count * tile_size
@@ -341,10 +359,13 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption(languages[choosen_language][0])
 tile_size = 50
 bg_img = pygame.image.load(os.path.join("kepek", "hatter.png")).convert()
+bg_img = pygame.transform.scale(bg_img, (1000, 1000))
 bg2_img = pygame.image.load(os.path.join("kepek", "hatter2.png")).convert()
 bg2_img = pygame.transform.scale(bg2_img, (1000, 1000))
 bg3_img = pygame.image.load(os.path.join("kepek", "hatter3.png")).convert()
 bg3_img = pygame.transform.scale(bg3_img, (1000, 1000))
+bg4_img = pygame.image.load(os.path.join("kepek", "hatter4.png")).convert()
+bg4_img = pygame.transform.scale(bg4_img, (1000, 1000))
 
 level_name = languages[choosen_language]["in game"][0]
 
@@ -356,7 +377,8 @@ world5 = World(worlds.world5_data, 5, f"{level_name}: 5")
 world6 = World(worlds.world6_data, 6, f"{level_name}: 6")
 world7 = World(worlds.world7_data, 7, f"{level_name}: 7")
 world8 = World(worlds.world8_data, 8, f"{level_name}: 8")
-worlds_list = [world, world2, world3, world4, world5, world6, world7, world8]
+world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
+worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, world9]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
@@ -377,9 +399,10 @@ async def main(level):
 			screen.blit(bg_img, (0, 0))
 		elif level >= 4 and level <= 5:
 			screen.blit(bg2_img, (0, 0))
-		elif level >= 6:
+		elif level >= 6 and level <= 8:
 			screen.blit(bg3_img, (0, 0))
-
+		elif level >= 9:
+			screen.blit(bg4_img, (0, 0))
 
 		current_world.draw(pause, run, languages, choosen_language)
 		current_world.draw_broken_blocks()
