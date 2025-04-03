@@ -143,6 +143,7 @@ class World():
 		self.level_name = level_name
 		self.tile_list = []
 		self.world_enemy_group = pygame.sprite.Group()
+		self.fireballs_group = pygame.sprite.Group()
 		self.player_place = None
 		self.blocks = []
 		
@@ -264,6 +265,10 @@ class World():
 				if tile == "p":
 					self.player_place = Player(level, False, col_count * tile_size, row_count * tile_size)
 
+				if tile == "fb":
+					fireball = Fireball(col_count * tile_size, row_count * tile_size)
+					self.fireballs_group.add(fireball)
+
 				col_count += 1
 			row_count += 1
 
@@ -299,6 +304,31 @@ class World():
 
 	def get_player(self):
 		return self.player_place
+
+
+class Fireball(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		pygame.sprite.Sprite.__init__(self)
+		image = pygame.image.load(os.path.join("kivagott_tuzgolyo.png"))
+		self.image = pygame.transform.scale(image, (25, 25))
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
+		self.initial_y = y
+		self.vertical_velocity = -5
+
+	def update(self):
+		self.rect.y += self.vertical_velocity
+		distance_revealed = abs(self.initial_y - self.rect.y)
+
+		if self.vertical_velocity < 0:
+			if distance_revealed >= 100:
+				self.vertical_velocity *= -1
+		elif self.vertical_velocity > 0:
+			if self.rect.y >= self.initial_y:
+				self.vertical_velocity = 0
+				self.rect.y = self.initial_y
+
 
 
 def make_tile(image, tile_size, column, row, number):
@@ -416,6 +446,8 @@ async def main(level):
 		player = worlds_list[level - 1].get_player()
 		current_world.world_enemy_group.update()
 		current_world.world_enemy_group.draw(screen)
+		current_world.fireballs_group.update()
+		current_world.fireballs_group.draw(screen)
 		completed = player.update()
 
 
