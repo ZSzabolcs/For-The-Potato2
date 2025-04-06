@@ -171,27 +171,15 @@ class World():
 					self.tile_list.append(tile)
 					
 				if tile == 3:
-					img = pygame.transform.scale(goal_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 3, img_rect.x, img_rect.y)
+					tile = make_tile(goal_img, tile_size, col_count, row_count, 3)
 					self.tile_list.append(tile)
 
 				if tile == 4:
-					img = pygame.transform.scale(water_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 4)
+					tile = make_tile(water_img, tile_size, col_count, row_count, 4)
 					self.tile_list.append(tile)
 
 				if tile == 5:
-					img = pygame.transform.scale(goal2_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 5)
+					tile = make_tile(goal2_img, tile_size, col_count, row_count, 5)
 					self.tile_list.append(tile)
 
 				if tile == 6:
@@ -199,67 +187,35 @@ class World():
 					self.world_enemy_group.add(enemy)
 				
 				if tile == 7:
-					img = pygame.transform.scale(rock_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 7)
+					tile = make_tile(rock_img, tile_size, col_count, row_count, 7)
 					self.tile_list.append(tile)
 				
 				if tile == 8:
-					img = pygame.transform.scale(lava_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 4)
+					tile = make_tile(lava_img, tile_size, col_count, row_count, 4)
 					self.tile_list.append(tile)
 				
 				if tile == 10:
-					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 10)
+					tile = make_tile(snow_img, tile_size, col_count, row_count, 10)
 					self.tile_list.append(tile)
 
 				if tile == 11:
-					img = pygame.transform.scale(water2_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					tile = (img, img_rect, 4)
+					tile = make_tile(water2_img, tile_size, col_count, row_count, 4)
 					self.tile_list.append(tile)
 
 				if tile == "b1":
-					img = pygame.transform.scale(rock_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					block = Block(img_rect.x, img_rect.y, img, 2)
+					block = make_block(rock_img, col_count, row_count, 2)
 					self.blocks.append(block)
 
 				if tile == "b2":
-					img = pygame.transform.scale(grass_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					block = Block(img_rect.x, img_rect.y, img, 3)
+					block = make_block(grass_img, col_count, row_count, 3)
 					self.blocks.append(block)
 
 				if tile == "b3":
-					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					block = Block(img_rect.x, img_rect.y, img, 2)
+					block = make_block(snow_img, col_count, row_count, 2)
 					self.blocks.append(block)
 
 				if tile == "b4":
-					img = pygame.transform.scale(snow_img, (tile_size, tile_size))
-					img_rect = img.get_rect()
-					img_rect.x = col_count * tile_size
-					img_rect.y = row_count * tile_size
-					block = Block(img_rect.x, img_rect.y, img, 2)
+					block = make_block(snow_img, col_count, row_count, 2)
 					self.blocks.append(block)
 
 				if tile == "p":
@@ -271,6 +227,7 @@ class World():
 
 				col_count += 1
 			row_count += 1
+
 
 
 	def draw(self, pause, run, lang, ch_lang, mouse = None, ):
@@ -302,18 +259,25 @@ class World():
 			bloc.update()
 			bloc.draw(screen)
 
+	
+
 	def get_player(self):
 		return self.player_place
+
+
 
 
 class Fireball(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
-		image = pygame.image.load(os.path.join("kivagott_tuzgolyo.png"))
+		image = pygame.image.load(os.path.join("kepek", "lava.png"))
+		self.lava = image
 		self.image = pygame.transform.scale(image, (25, 25))
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
+		self.start_x = x
+		self.start_y = y
 		self.initial_y = y
 		self.vertical_velocity = -5
 
@@ -326,24 +290,10 @@ class Fireball(pygame.sprite.Sprite):
 				self.vertical_velocity *= -1
 		elif self.vertical_velocity > 0:
 			if self.rect.y >= self.initial_y:
-				self.vertical_velocity = 0
+				self.vertical_velocity = -5
 				self.rect.y = self.initial_y
 
 
-
-def make_tile(image, tile_size, column, row, number):
-	img = pygame.transform.scale(image, (tile_size, tile_size))
-	img_rect = img.get_rect()
-	img_rect.x = column * tile_size
-	img_rect.y = row * tile_size
-	tile = (img, img_rect, number)
-	return tile
-
-
-def saving_game(points, level, choosen_lang):
-	with open("saves.csv", "w") as file:
-		file.write(f"{str(points)} {str(level)} {choosen_lang}")
-		file.close()
 
 
 class Block(pygame.sprite.Sprite):
@@ -369,6 +319,30 @@ class Block(pygame.sprite.Sprite):
 
 
 
+def make_block(image, col_count, row_count, seconds):
+	img = pygame.transform.scale(image, (tile_size, tile_size))
+	img_rect = img.get_rect()
+	img_rect.x = col_count * tile_size
+	img_rect.y = row_count * tile_size
+	block = Block(img_rect.x, img_rect.y, img, seconds)
+	return block
+
+
+def make_tile(image, tile_size, col_count, row_count, number):
+	img = pygame.transform.scale(image, (tile_size, tile_size))
+	img_rect = img.get_rect()
+	img_rect.x = col_count * tile_size
+	img_rect.y = row_count * tile_size
+	tile = (img, img_rect, number)
+	return tile
+
+
+def saving_game(points, level, choosen_lang):
+	with open("saves.csv", "w") as file:
+		file.write(f"{str(points)} {str(level)} {choosen_lang}")
+		file.close()
+
+		
 pygame.init()
 
 fonts = Selected_fonts()
@@ -414,8 +388,8 @@ world5 = World(worlds.world5_data, 5, f"{level_name}: 5")
 world6 = World(worlds.world6_data, 6, f"{level_name}: 6")
 world7 = World(worlds.world7_data, 7, f"{level_name}: 7")
 world8 = World(worlds.world8_data, 8, f"{level_name}: 8")
-world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
-worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, world9]
+#world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
+worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, """world9"""]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
@@ -443,7 +417,7 @@ async def main(level):
 
 		current_world.draw(pause, run, languages, choosen_language)
 		current_world.draw_broken_blocks()
-		player = worlds_list[level - 1].get_player()
+		player = current_world.get_player()
 		current_world.world_enemy_group.update()
 		current_world.world_enemy_group.draw(screen)
 		current_world.fireballs_group.update()
