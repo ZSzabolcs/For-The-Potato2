@@ -27,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
 	def update(self):
 		next_x = self.rect.x + self.move_direction * self.speed
 		next_bottom = self.rect.bottom + 1
-		ground_beneath_next = False
+		ground_beneath_next = 0
 		self.rect.x += self.move_direction * self.speed
 
 		for tile in worlds_list[self.level].tile_list:
@@ -36,7 +36,7 @@ class Enemy(pygame.sprite.Sprite):
 				if tile[1].collidepoint(self.rect.left, self.rect.midleft[1]) and tile[2] > 0:
 					self.move_direction *= -1
 				if tile[1].colliderect(next_x + self.rect.width // 2, next_bottom, 1, 1):
-					ground_beneath_next = True
+					ground_beneath_next = 1
 
 		if not ground_beneath_next:
 			self.move_direction *= -1
@@ -52,12 +52,12 @@ class Player():
 		self.rect.x = x
 		self.rect.y = y
 		self.vel_y = 0
-		self.jumped = False
+		self.jumped = 0
 		self.width = self.image.get_width()
 		self.height = self.image.get_height()
 		self.checkpoint_x = self.rect.x
 		self.checkpoint_y = self.rect.y
-		self.died = False
+		self.died = 0
 		self.completed = completed
 		self.player_place = None
 
@@ -69,9 +69,9 @@ class Player():
 			dx -= 5
 		if key[pygame.K_RIGHT]:
 			dx += 5
-		if key[pygame.K_UP] and self.jumped == False:
+		if key[pygame.K_UP] and self.jumped == 0:
 			self.vel_y = -15
-			self.jumped = True
+			self.jumped = 1
 
 		self.vel_y += 1
 		if self.vel_y > 10:
@@ -80,8 +80,8 @@ class Player():
 
 		for tile in worlds_list[self.level].tile_list:
 			if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-				if key[pygame.K_UP] == False:
-					self.jumped = False
+				if key[pygame.K_UP] == 0:
+					self.jumped = 0
 				if self.vel_y < 0:
 					dy = tile[1].bottom - self.rect.top
 					self.vel_y = 0
@@ -89,12 +89,12 @@ class Player():
 					dy = tile[1].top - self.rect.bottom
 					self.vel_y = 0
 				if tile[2] == 4:
-					self.died = True
+					self.died = 1
 				if tile[2] == 3:
 					self.checkpoint_x = tile[1].x
 					self.checkpoint_y = tile[1].y
 				if tile[2] == 5:
-					return True
+					return 1
 		
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				dx = 0
@@ -105,12 +105,12 @@ class Player():
 					enemy.kill()  
 					self.vel_y = -10 
 				else: 
-					self.died = True
+					self.died = 1
 
 		for block in worlds_list[self.level].blocks:
 			if block.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-				if key[pygame.K_UP] == False:
-					self.jumped = False
+				if key[pygame.K_UP] == 0:
+					self.jumped = 0
 				if self.vel_y < 0 and block.visible:
 					dy = block.rect.bottom - self.rect.top
 					self.vel_y = 0					
@@ -122,14 +122,14 @@ class Player():
 			self.rect.bottom = screen_height
 			dy = 0
 			
-		if self.died == False:
+		if self.died == 0:
 			self.rect.x += dx
 			self.rect.y += dy
 		
 		else:
 			self.rect.x = self.checkpoint_x
 			self.rect.y = self.checkpoint_y
-			self.died = False
+			self.died = 0
 
 		screen.blit(self.image, self.rect)
 
@@ -219,7 +219,7 @@ class World():
 					self.blocks.append(block)
 
 				if tile == "p":
-					self.player_place = Player(level, False, col_count * tile_size, row_count * tile_size)
+					self.player_place = Player(level, 0, col_count * tile_size, row_count * tile_size)
 
 				if tile == "fb":
 					fireball = Fireball(col_count * tile_size, row_count * tile_size)
@@ -233,7 +233,7 @@ class World():
 	def draw(self, pause, run, lang, ch_lang, mouse = None, ):
 		for tile in self.tile_list:
 			if pause and not run:
-				megallitva = fonts.font_size80.render(lang[ch_lang]["in game"][1], False, BLACK)
+				megallitva = fonts.font_size80.render(lang[ch_lang]["in game"][1], 0, BLACK)
 				if ch_lang == "en":
 					megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 200)
 					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.17), in_game_menu_rects[0].center[1]-15)
@@ -249,7 +249,7 @@ class World():
 				screen.blit(quit_game_text, quit_game_text_place)
 				pygame.display.update()
 
-			text = fonts.font_size50.render(self.level_name, False, BLACK)
+			text = fonts.font_size50.render(self.level_name, 0, BLACK)
 			text_place = text.get_rect()
 			screen.blit(text, text_place)
 			screen.blit(tile[0], tile[1])
@@ -303,7 +303,7 @@ class Block(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
-		self.visible = True
+		self.visible = 1
 		self.last_toggle_time = time.time()
 		self.sec = second
 
@@ -399,7 +399,7 @@ in_game_menu_rects = [
 
 async def main(level):
 	run = 1
-	completed = False
+	completed = 0
 	clock = pygame.time.Clock()
 	FPS = 60
 	pause = 0
@@ -425,9 +425,9 @@ async def main(level):
 		completed = player.update()
 
 
-		if completed == True:
+		if completed == 1:
 			level += 1
-			completed = False
+			completed = 0
 			player = Player(level, completed, player.checkpoint_x, player.checkpoint_y)
 			continue
 
