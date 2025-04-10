@@ -388,8 +388,8 @@ world5 = World(worlds.world5_data, 5, f"{level_name}: 5")
 world6 = World(worlds.world6_data, 6, f"{level_name}: 6")
 world7 = World(worlds.world7_data, 7, f"{level_name}: 7")
 world8 = World(worlds.world8_data, 8, f"{level_name}: 8")
-#world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
-worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, """world9"""]
+world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
+worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, world9]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
