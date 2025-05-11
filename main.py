@@ -12,6 +12,8 @@ from styles import set_language
 from styles import languages
 from styles import Selected_fonts
 
+
+
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
@@ -118,6 +120,11 @@ class Player():
 					dy = block.rect.top - self.rect.bottom
 					self.vel_y = 0
 
+
+		for fireball in worlds_list[self.level].fireballs_group:
+			if self.rect.colliderect(fireball.rect):
+				self.died = 1
+
 		if self.rect.bottom > screen_height:
 			self.rect.bottom = screen_height
 			dy = 0
@@ -223,7 +230,10 @@ class World():
 
 				if tile == "fb":
 					fireball = Fireball(col_count * tile_size, row_count * tile_size)
+					tile = make_tile(lava_img, tile_size, col_count, row_count, 4)
 					self.fireballs_group.add(fireball)
+					self.tile_list.append(tile)
+					
 
 				col_count += 1
 			row_count += 1
@@ -259,8 +269,6 @@ class World():
 			bloc.update()
 			bloc.draw(screen)
 
-	
-
 	def get_player(self):
 		return self.player_place
 
@@ -271,10 +279,9 @@ class Fireball(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
 		image = pygame.image.load(os.path.join("kepek", "lava.png"))
-		self.lava = image
 		self.image = pygame.transform.scale(image, (25, 25))
 		self.rect = self.image.get_rect()
-		self.rect.x = x
+		self.rect.x = x + 15
 		self.rect.y = y
 		self.start_x = x
 		self.start_y = y
@@ -292,7 +299,7 @@ class Fireball(pygame.sprite.Sprite):
 			if self.rect.y >= self.initial_y:
 				self.vertical_velocity = -5
 				self.rect.y = self.initial_y
-
+		
 
 
 
