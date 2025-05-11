@@ -30,7 +30,9 @@ languages = {
 		6: "There is no saves!",
 		"in game":{
 			0: "Level",
-			1: "Paused"
+			1: "Paused",
+			2: "Menu: ESC",
+			3: "Saves when quit!"
 		}
 	},
 
@@ -46,8 +48,10 @@ languages = {
 		5: "Kilépés a játékból",
 		6: "Nincsenek mentések!",
 		"in game":{
-			0:"Szint",
-			1:"Megállítva"
+			0: "Szint",
+			1: "Megállítva",
+			2: "Menü: ESC",
+			3: "Ment kilépéskor!"
 		}
 	}
 }
@@ -63,4 +67,4 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-WHITE = (255, 255, 255)
+WHITE = (255, 255, 255, 0.5)

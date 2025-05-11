@@ -8,6 +8,7 @@ from menu import menu_page
 from styles import BLACK
 from styles import RED
 from styles import BLUE
+from styles import WHITE
 from styles import set_language
 from styles import languages
 from styles import Selected_fonts
@@ -240,28 +241,42 @@ class World():
 
 
 
-	def draw(self, pause, run, lang, ch_lang, mouse = None, ):
+	def draw(self, pause, run, lang, ch_lang, mouse = None):
 		for tile in self.tile_list:
 			if pause and not run:
+				explainer_text = fonts.font_size50.render(languages[choosen_language]["in game"][3], 0, BLACK)
+				explainer_text_place = (screen_width*0.4 - 10, screen_height/2 + 100)	
+
 				megallitva = fonts.font_size80.render(lang[ch_lang]["in game"][1], 0, BLACK)
 				if ch_lang == "en":
-					megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 200)
+					megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 150)
 					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.17), in_game_menu_rects[0].center[1]-15)
+					explainer_text_place = (screen_width*0.4 - 10, screen_height/2 + 100)
 				else:
-					megallitva_place = (screen_width // 2 - 130, screen_height // 2 - 200)
+					megallitva_place = (screen_width // 2 - 120, screen_height // 2 - 150)
 					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.27), in_game_menu_rects[0].center[1]-15)
+					explainer_text_place = (screen_width*0.4 - 20, screen_height/2 + 100)
 				for rect in in_game_menu_rects:
 					square = pygame.draw.rect(screen, BLACK, rect)
 					if square.collidepoint(float(mouse[0]), float(mouse[1])) and mouse is not None:
 						square = pygame.draw.rect(screen, BLUE, rect)
-				quit_game_text = fonts.font_size50.render(lang[ch_lang][4], 0, RED)
+				quit_game_text = fonts.font_size50.render(lang[ch_lang][5], 0, RED)
 				screen.blit(megallitva, megallitva_place)
 				screen.blit(quit_game_text, quit_game_text_place)
+				screen.blit(explainer_text, explainer_text_place)
 				pygame.display.update()
 
-			text = fonts.font_size50.render(self.level_name, 0, BLACK)
-			text_place = text.get_rect()
-			screen.blit(text, text_place)
+			if self.level < 5:
+				choosen_color = BLACK
+			else:
+				choosen_color = WHITE
+
+			level_text = fonts.font_size50.render(self.level_name, 0, choosen_color)
+			escape_text = fonts.font_size50.render(lang[ch_lang]["in game"][2], 0, choosen_color)
+			text_place = level_text.get_rect()
+			escape_text_place = (0, 35)
+			screen.blit(level_text, text_place)
+			screen.blit(escape_text, escape_text_place)
 			screen.blit(tile[0], tile[1])
 			
 	def draw_broken_blocks(self):
@@ -399,10 +414,8 @@ world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
 worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, world9]
 
 in_game_menu_rects = [
-	pygame.rect.Rect(screen_width*0.27, screen_height/2, screen_width*0.5, screen_width*0.1)
+	pygame.rect.Rect(screen_width*0.27, screen_height/2-50, screen_width*0.5, screen_width*0.1)
 ]
-
-
 
 async def main(level):
 	run = 1
@@ -451,6 +464,7 @@ async def main(level):
 		while not run and pause:
 			mouse = pygame.mouse.get_pos()
 			current_world.draw(pause, run, languages, choosen_language, mouse)
+
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 					pause = 0
