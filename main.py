@@ -308,7 +308,7 @@ class Fireball(pygame.sprite.Sprite):
 		distance_revealed = abs(self.initial_y - self.rect.y)
 
 		if self.vertical_velocity < 0:
-			if distance_revealed >= 125:
+			if distance_revealed >= 200:
 				self.vertical_velocity *= -1
 		elif self.vertical_velocity > 0:
 			if self.rect.y >= self.initial_y:
