@@ -164,6 +164,7 @@ class World():
 		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
 		rock_img = pygame.image.load(os.path.join("kepek", "rock.png"))
 		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
+		tuzgolyo_img = pygame.image.load(os.path.join("kepek", "tuzgolyo.png"))
 		snow_img = pygame.image.load(os.path.join("kepek", "snow.png"))
 
 		row_count = 0
@@ -293,7 +294,7 @@ class World():
 class Fireball(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
-		image = pygame.image.load(os.path.join("kepek", "lava.png"))
+		image = pygame.image.load(os.path.join("kepek", "tuzgolyo.png"))
 		self.image = pygame.transform.scale(image, (25, 25))
 		self.rect = self.image.get_rect()
 		self.rect.x = x + 15
