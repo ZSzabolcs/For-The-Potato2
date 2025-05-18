@@ -152,6 +152,7 @@ class World():
 		self.tile_list = []
 		self.world_enemy_group = pygame.sprite.Group()
 		self.fireballs_group = pygame.sprite.Group()
+		self.stalactite_group = pygame.sprite.Group()
 		self.player_place = None
 		self.blocks = []
 		
@@ -235,7 +236,13 @@ class World():
 					tile = make_tile(lava_img, tile_size, col_count, row_count, 4)
 					self.fireballs_group.add(fireball)
 					self.tile_list.append(tile)
+				
+				if tile == "st":
 					
+					tile = make_tile(rock_img, tile_size, col_count, row_count, 7)
+					stalactite = Stalactite(col_count * tile_size, row_count * tile_size, tile)
+					self.stalactite_group.add(stalactite)
+					self.tile_list.append(tile)
 
 				col_count += 1
 			row_count += 1
@@ -243,41 +250,42 @@ class World():
 
 
 	def draw(self, pause, run, lang, ch_lang, mouse = None):
+
+		def draw_left_top_texts():
+			if self.level < 5:
+				chosen_color = BLACK
+			else:
+				chosen_color = WHITE
+
+			level_text = fonts.font_size50.render(self.level_name, 0, chosen_color)
+			escape_text = fonts.font_size30.render(lang[ch_lang]["in game"][2], 0, chosen_color)
+			level_text_place = level_text.get_rect()
+			escape_text_place = (0, 35)
+			screen.blit(level_text, level_text_place)
+			screen.blit(escape_text, escape_text_place)
+
 		for tile in self.tile_list:
 			if pause and not run:
-				explainer_text = fonts.font_size50.render(languages[choosen_language]["in game"][3], 0, BLACK)
+				explainer_text = fonts.font_size50.render(lang[ch_lang]["in game"][3], 0, BLACK)
 				explainer_text_place = (screen_width*0.4 - 10, screen_height/2 + 100)	
 
-				megallitva = fonts.font_size80.render(lang[ch_lang]["in game"][1], 0, BLACK)
 				if ch_lang == "en":
-					megallitva_place = (screen_width // 2 - 80, screen_height // 2 - 150)
-					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.17), in_game_menu_rects[0].center[1]-15)
-					explainer_text_place = (screen_width*0.4 - 10, screen_height/2 + 100)
+					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.30), in_game_menu_rects[0].center[1]-15)
+					explainer_text_place = (screen_width*0.4 - 60, screen_height/2 + 100)
 				else:
-					megallitva_place = (screen_width // 2 - 120, screen_height // 2 - 150)
-					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.27), in_game_menu_rects[0].center[1]-15)
-					explainer_text_place = (screen_width*0.4 - 20, screen_height/2 + 100)
+					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.45), in_game_menu_rects[0].center[1]-15)
+					explainer_text_place = (screen_width*0.4 - 60, screen_height/2 + 100)
 				for rect in in_game_menu_rects:
 					square = pygame.draw.rect(screen, BLACK, rect)
 					if square.collidepoint(float(mouse[0]), float(mouse[1])) and mouse is not None:
 						square = pygame.draw.rect(screen, BLUE, rect)
 				quit_game_text = fonts.font_size50.render(lang[ch_lang][5], 0, RED)
-				screen.blit(megallitva, megallitva_place)
 				screen.blit(quit_game_text, quit_game_text_place)
 				screen.blit(explainer_text, explainer_text_place)
+				draw_left_top_texts()
 				pygame.display.update()
 
-			if self.level < 5:
-				choosen_color = BLACK
-			else:
-				choosen_color = WHITE
-
-			level_text = fonts.font_size50.render(self.level_name, 0, choosen_color)
-			escape_text = fonts.font_size50.render(lang[ch_lang]["in game"][2], 0, choosen_color)
-			text_place = level_text.get_rect()
-			escape_text_place = (0, 35)
-			screen.blit(level_text, text_place)
-			screen.blit(escape_text, escape_text_place)
+			draw_left_top_texts()
 			screen.blit(tile[0], tile[1])
 			
 	def draw_broken_blocks(self):
@@ -316,6 +324,38 @@ class Fireball(pygame.sprite.Sprite):
 				self.vertical_velocity = -5
 				self.rect.y = self.initial_y
 		
+
+
+
+class Stalactite(pygame.sprite.Sprite):
+	def __init__(self, x, y, tile):
+		pygame.sprite.Sprite.__init__(self)
+		image = pygame.image.load(os.path.join("kepek", "tuzgolyo.png"))
+		self.image = pygame.transform.scale(image, (25, 25))
+		self.rect = self.image.get_rect()
+		self.rect.x = x + 15
+		self.rect.y = y + 30
+		self.start_x = x
+		self.start_y = y
+		self.initial_y = y
+		self.starting_tile = tile[1]
+		self.fall = 0
+		self.vertical_velocity = 5
+
+	def update(self, player : Player, tile_list : list):
+		if player.rect.y - 250 <= self.rect.y and player.rect.x + 15 >= self.rect.x:
+			self.fall = 1
+
+		if self.fall:
+			self.rect.y += self.vertical_velocity
+			for tile in tile_list:
+				if self.rect.colliderect(tile[1]) and not self.rect.colliderect(self.starting_tile):
+					self.kill()
+
+		if self.rect.colliderect(player):
+			player.died = 1
+
+
 
 
 
@@ -360,9 +400,9 @@ def make_tile(image, tile_size, col_count, row_count, number):
 	return tile
 
 
-def saving_game(points, level, choosen_lang):
+def saving_game(points, level, chosen_lang):
 	with open("saves.csv", "w") as file:
-		file.write(f"{str(points)} {str(level)} {choosen_lang}")
+		file.write(f"{str(points)} {str(level)} {chosen_lang}")
 		file.close()
 
 		
@@ -443,6 +483,8 @@ async def main(level):
 		current_world.world_enemy_group.draw(screen)
 		current_world.fireballs_group.update()
 		current_world.fireballs_group.draw(screen)
+		current_world.stalactite_group.draw(screen)
+		current_world.stalactite_group.update(player, current_world.tile_list)
 		completed = player.update()
 
 

@@ -96,7 +96,8 @@ def menu_page(window_width, window_height, fonts, ch_lang, languages):
 
             music_button_text_place = ((rects[3].center[0])-(rects[3].center[0]*0.2), rects[3].center[1]-15)
 
-            quit_game_text_place = ((rects[4].center[0])-(rects[4].center[0]*0.17), rects[4].center[1]-15)
+            quit_game_text_place = ((rects[4].center[0])-(rects[4].center[0]*0.30), rects[4].center[1]-15)
+            
         else:
             new_game_text_place = ((rects[0].center[0])-(rects[0].center[0]*0.13), rects[0].center[1]-15)
 
@@ -106,7 +107,7 @@ def menu_page(window_width, window_height, fonts, ch_lang, languages):
 
             music_button_text_place = ((rects[3].center[0])-(rects[3].center[0]*0.15), rects[3].center[1]-15)
 
-            quit_game_text_place = ((rects[4].center[0])-(rects[4].center[0]*0.3), rects[4].center[1]-15)
+            quit_game_text_place = ((rects[4].center[0])-(rects[4].center[0]*0.45), rects[4].center[1]-15)
 
         window.blit(new_game_text, new_game_text_place)
         window.blit(load_game_text, load_game_text_place)
