@@ -165,8 +165,8 @@ class World():
 		goal2_img = pygame.image.load(os.path.join("kepek", "goal2.png"))
 		rock_img = pygame.image.load(os.path.join("kepek", "rock.png"))
 		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
-		tuzgolyo_img = pygame.image.load(os.path.join("kepek", "tuzgolyo.png"))
 		snow_img = pygame.image.load(os.path.join("kepek", "snow.png"))
+		snow2_img = pygame.image.load(os.path.join("kepek", "snow2.png"))
 
 		row_count = 0
 		for row in self.world_map:
@@ -202,6 +202,10 @@ class World():
 				
 				if tile == 8:
 					tile = make_tile(lava_img, tile_size, col_count, row_count, 4)
+					self.tile_list.append(tile)
+
+				if tile == 9:
+					tile = make_tile(snow2_img, tile_size, col_count, row_count, 9)
 					self.tile_list.append(tile)
 				
 				if tile == 10:
@@ -310,7 +314,7 @@ class Fireball(pygame.sprite.Sprite):
 		self.start_x = x
 		self.start_y = y
 		self.initial_y = y
-		self.vertical_velocity = -5
+		self.vertical_velocity = -4
 
 	def update(self):
 		self.rect.y += self.vertical_velocity
@@ -321,7 +325,7 @@ class Fireball(pygame.sprite.Sprite):
 				self.vertical_velocity *= -1
 		elif self.vertical_velocity > 0:
 			if self.rect.y >= self.initial_y:
-				self.vertical_velocity = -5
+				self.vertical_velocity = -4
 				self.rect.y = self.initial_y
 		
 
@@ -340,7 +344,7 @@ class Stalactite(pygame.sprite.Sprite):
 		self.initial_y = y
 		self.starting_tile = tile[1]
 		self.fall = 0
-		self.vertical_velocity = 5
+		self.vertical_velocity = 7
 
 	def update(self, player : Player, tile_list : list):
 		if player.rect.y - 250 <= self.rect.y and player.rect.x + 15 >= self.rect.x:
