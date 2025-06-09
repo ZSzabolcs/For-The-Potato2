@@ -167,6 +167,7 @@ class World():
 		lava_img = pygame.image.load(os.path.join("kepek", "lava.png"))
 		snow_img = pygame.image.load(os.path.join("kepek", "snow.png"))
 		snow2_img = pygame.image.load(os.path.join("kepek", "snow2.png"))
+		ice_img = pygame.image.load(os.path.join("kepek", "ice.png"))
 
 		row_count = 0
 		for row in self.world_map:
@@ -214,6 +215,10 @@ class World():
 
 				if tile == 11:
 					tile = make_tile(water2_img, tile_size, col_count, row_count, 4)
+					self.tile_list.append(tile)
+
+				if tile == 12:
+					tile = make_tile(ice_img, tile_size, col_count, row_count, 12)
 					self.tile_list.append(tile)
 
 				if tile == "b1":
@@ -456,7 +461,8 @@ world6 = World(worlds.world6_data, 6, f"{level_name}: 6")
 world7 = World(worlds.world7_data, 7, f"{level_name}: 7")
 world8 = World(worlds.world8_data, 8, f"{level_name}: 8")
 world9 = World(worlds.world9_data, 9, f"{level_name}: 9")
-worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, world9]
+world10 = World(worlds.world10_data, 10, f"{level_name}: 10")
+worlds_list = [world, world2, world3, world4, world5, world6, world7, world8, world9, world10]
 
 in_game_menu_rects = [
 	pygame.rect.Rect(screen_width*0.27, screen_height/2-50, screen_width*0.5, screen_width*0.1)
