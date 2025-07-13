@@ -30,9 +30,7 @@ languages = {
 		6: "There is no saves!",
 		"in game":{
 			0: "Level",
-			1: "Paused",
-			2: "Open menu and pause the game: ESC",
-			3: "To continue again: ESC"
+			1: "Paused"
 		}
 	},
 
@@ -49,9 +47,7 @@ languages = {
 		6: "Nincsenek mentések!",
 		"in game":{
 			0: "Szint",
-			1: "Megállítva",
-			2: "Menü megnyitása és játék megállítása: ESC",
-			3: "Folytatáshoz újra: ESC"
+			1: "Megállítva"
 		}
 	}
 }

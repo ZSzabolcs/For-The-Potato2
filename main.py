@@ -14,7 +14,6 @@ from styles import languages
 from styles import Selected_fonts
 
 
-
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, x, y, level):
 		pygame.sprite.Sprite.__init__(self)
@@ -169,6 +168,7 @@ class World():
 		snow2_img = pygame.image.load(os.path.join("kepek", "snow2.png"))
 		ice_img = pygame.image.load(os.path.join("kepek", "ice.png"))
 
+		DEADLY = 4
 		row_count = 0
 		for row in self.world_map:
 			col_count = 0
@@ -185,8 +185,8 @@ class World():
 					tile = make_tile(goal_img, tile_size, col_count, row_count, 3)
 					self.tile_list.append(tile)
 
-				if tile == 4:
-					tile = make_tile(water_img, tile_size, col_count, row_count, 4)
+				if tile == DEADLY:
+					tile = make_tile(water_img, tile_size, col_count, row_count, DEADLY)
 					self.tile_list.append(tile)
 
 				if tile == 5:
@@ -202,7 +202,7 @@ class World():
 					self.tile_list.append(tile)
 				
 				if tile == 8:
-					tile = make_tile(lava_img, tile_size, col_count, row_count, 4)
+					tile = make_tile(lava_img, tile_size, col_count, row_count, DEADLY)
 					self.tile_list.append(tile)
 
 				if tile == 9:
@@ -214,7 +214,7 @@ class World():
 					self.tile_list.append(tile)
 
 				if tile == 11:
-					tile = make_tile(water2_img, tile_size, col_count, row_count, 4)
+					tile = make_tile(water2_img, tile_size, col_count, row_count, DEADLY)
 					self.tile_list.append(tile)
 
 				if tile == 12:
@@ -222,19 +222,19 @@ class World():
 					self.tile_list.append(tile)
 
 				if tile == "b1":
-					block = make_block(rock_img, col_count, row_count, 2)
+					block = make_disappearing_block(rock_img, col_count, row_count, 2)
 					self.blocks.append(block)
 
 				if tile == "b2":
-					block = make_block(grass_img, col_count, row_count, 3)
+					block = make_disappearing_block(grass_img, col_count, row_count, 3)
 					self.blocks.append(block)
 
 				if tile == "b3":
-					block = make_block(snow_img, col_count, row_count, 2)
+					block = make_disappearing_block(snow_img, col_count, row_count, 2)
 					self.blocks.append(block)
 
 				if tile == "b4":
-					block = make_block(snow_img, col_count, row_count, 2)
+					block = make_disappearing_block(snow_img, col_count, row_count, 2)
 					self.blocks.append(block)
 
 				if tile == "p":
@@ -242,7 +242,7 @@ class World():
 
 				if tile == "fb":
 					fireball = Fireball(col_count * tile_size, row_count * tile_size)
-					tile = make_tile(lava_img, tile_size, col_count, row_count, 4)
+					tile = make_tile(lava_img, tile_size, col_count, row_count, DEADLY)
 					self.fireballs_group.add(fireball)
 					self.tile_list.append(tile)
 				
@@ -267,30 +267,23 @@ class World():
 				chosen_color = WHITE
 
 			level_text = fonts.font_size50.render(self.level_name, 0, chosen_color)
-			escape_text = fonts.font_size30.render(lang[ch_lang]["in game"][2], 0, chosen_color)
 			level_text_place = level_text.get_rect()
-			escape_text_place = (0, 35)
 			screen.blit(level_text, level_text_place)
-			screen.blit(escape_text, escape_text_place)
 
 		for tile in self.tile_list:
 			if pause and not run:
-				explainer_text = fonts.font_size50.render(lang[ch_lang]["in game"][3], 0, BLACK)
-				explainer_text_place = (screen_width*0.4 - 10, screen_height/2 + 100)	
 
 				if ch_lang == "en":
 					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.30), in_game_menu_rects[0].center[1]-15)
-					explainer_text_place = (screen_width*0.4 - 60, screen_height/2 + 100)
 				else:
 					quit_game_text_place = ((in_game_menu_rects[0].center[0])-(in_game_menu_rects[0].center[0]*0.45), in_game_menu_rects[0].center[1]-15)
-					explainer_text_place = (screen_width*0.4 - 60, screen_height/2 + 100)
+
 				for rect in in_game_menu_rects:
 					square = pygame.draw.rect(screen, BLACK, rect)
 					if square.collidepoint(float(mouse[0]), float(mouse[1])) and mouse is not None:
 						square = pygame.draw.rect(screen, BLUE, rect)
 				quit_game_text = fonts.font_size50.render(lang[ch_lang][5], 0, RED)
 				screen.blit(quit_game_text, quit_game_text_place)
-				screen.blit(explainer_text, explainer_text_place)
 				draw_left_top_texts()
 				pygame.display.update()
 
@@ -391,7 +384,7 @@ class Block(pygame.sprite.Sprite):
 
 
 
-def make_block(image, col_count, row_count, seconds):
+def make_disappearing_block(image, col_count, row_count, seconds):
 	img = pygame.transform.scale(image, (tile_size, tile_size))
 	img_rect = img.get_rect()
 	img_rect.x = col_count * tile_size
@@ -400,12 +393,12 @@ def make_block(image, col_count, row_count, seconds):
 	return block
 
 
-def make_tile(image, tile_size, col_count, row_count, number):
+def make_tile(image, tile_size, col_count, row_count, typeofnumber):
 	img = pygame.transform.scale(image, (tile_size, tile_size))
 	img_rect = img.get_rect()
 	img_rect.x = col_count * tile_size
 	img_rect.y = row_count * tile_size
-	tile = (img, img_rect, number)
+	tile = (img, img_rect, typeofnumber)
 	return tile
 
 
